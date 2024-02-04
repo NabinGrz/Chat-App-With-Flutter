@@ -39,6 +39,7 @@ dependencies:
   hooks_riverpod: ^2.4.10
   dio: ^5.4.0
   dartz: ^0.10.1
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:

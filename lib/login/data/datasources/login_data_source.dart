@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../domain/entities/user.dart';
@@ -24,6 +25,10 @@ class LoginDataSourceImpl implements LoginDataSource {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = response.data;
+        final sharedPreference = await SharedPreferences.getInstance();
+        await sharedPreference.setString(
+            'accessToken', responseData['data']['accessToken']);
+
         return (SuccessfullLoginResponse.fromJson(responseData), null);
       } else {
         return (null, FailedLoginResponse.fromJson(response.data));

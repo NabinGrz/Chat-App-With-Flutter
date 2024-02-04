@@ -4,13 +4,13 @@ import 'package:flutter_chat_app/login/domain/entities/user.dart';
 import 'package:flutter_chat_app/login/provider/login_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'state/app_state.dart';
+import '../../shared/auth_state/auth_state.dart';
 
 class LoginPage extends ConsumerWidget {
   LoginPage({super.key});
 
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final usernameController = TextEditingController(text: "nabin");
+  final passwordController = TextEditingController(text: "nabin");
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(loginProvider);
@@ -29,6 +29,7 @@ class LoginPage extends ConsumerWidget {
       } else if (next is Success) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(next.successfullAppStateResponse)));
+        AppRouter.pushNamed(context: context, routeName: AppRouter.chatList);
       } else {}
     });
     return Scaffold(

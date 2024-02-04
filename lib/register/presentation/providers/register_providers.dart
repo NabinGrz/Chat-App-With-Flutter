@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_chat_app/register/data/datasources/register_data_source.dart';
 import 'package:flutter_chat_app/register/domain/entities/register_data.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import '../../../login/presentation/state/app_state.dart';
+import '../../../shared/auth_state/auth_state.dart';
 import '../../data/repositories/register_repository_implementation.dart';
 import '../../domain/usecase/register_usecase.dart';
 
@@ -22,21 +21,21 @@ final registerUseCaseProvider = Provider<RegisterUseCase>((ref) {
 });
 
 final registerProvider =
-    StateNotifierProvider<RegisterNotifier, AppState>((ref) {
+    StateNotifierProvider<RegisterNotifier, AuthState>((ref) {
   final registerUseCase = ref.read(registerUseCaseProvider);
   return RegisterNotifier(registerUseCase);
 });
 
-class RegisterNotifier extends StateNotifier<AppState> {
+class RegisterNotifier extends StateNotifier<AuthState> {
   final RegisterUseCase _registerUseCase;
 
-  RegisterNotifier(this._registerUseCase) : super(const AppState.initial());
+  RegisterNotifier(this._registerUseCase) : super(const AuthState.initial());
 
   Future<void> registerUser(RegisterData userCredentials) async {
-    state = const AppState.loading();
+    state = const AuthState.loading();
     final response = await _registerUseCase.execute(userCredentials);
     state = response.$1 != null
-        ? AppState.success(response.$1!)
-        : AppState.failure(response.$2!);
+        ? AuthState.success(response.$1!)
+        : AuthState.failure(response.$2!);
   }
 }

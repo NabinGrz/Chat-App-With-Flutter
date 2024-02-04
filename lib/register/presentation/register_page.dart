@@ -3,8 +3,7 @@ import 'package:flutter_chat_app/register/domain/entities/register_data.dart';
 import 'package:flutter_chat_app/register/presentation/providers/register_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../core/routes/app_routes.dart';
-import '../../login/presentation/state/app_state.dart';
+import '../../shared/auth_state/auth_state.dart';
 
 class RegisterPage extends ConsumerWidget {
   RegisterPage({super.key});

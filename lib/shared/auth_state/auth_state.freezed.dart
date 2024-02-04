@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'app_state.dart';
+part of 'auth_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AppState {
+mixin _$AuthState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
@@ -69,15 +69,15 @@ mixin _$AppState {
 }
 
 /// @nodoc
-abstract class $AppStateCopyWith<$Res> {
-  factory $AppStateCopyWith(AppState value, $Res Function(AppState) then) =
-      _$AppStateCopyWithImpl<$Res, AppState>;
+abstract class $AuthStateCopyWith<$Res> {
+  factory $AuthStateCopyWith(AuthState value, $Res Function(AuthState) then) =
+      _$AuthStateCopyWithImpl<$Res, AuthState>;
 }
 
 /// @nodoc
-class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
-    implements $AppStateCopyWith<$Res> {
-  _$AppStateCopyWithImpl(this._value, this._then);
+class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
+    implements $AuthStateCopyWith<$Res> {
+  _$AuthStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -94,7 +94,7 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$AppStateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$AuthStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
@@ -108,7 +108,7 @@ class _$InitialImpl implements Initial {
 
   @override
   String toString() {
-    return 'AppState.initial()';
+    return 'AuthState.initial()';
   }
 
   @override
@@ -195,7 +195,7 @@ class _$InitialImpl implements Initial {
   }
 }
 
-abstract class Initial implements AppState {
+abstract class Initial implements AuthState {
   const factory Initial() = _$InitialImpl;
 }
 
@@ -208,7 +208,7 @@ abstract class _$$LoadingImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$AppStateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$AuthStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
@@ -222,7 +222,7 @@ class _$LoadingImpl implements Loading {
 
   @override
   String toString() {
-    return 'AppState.loading()';
+    return 'AuthState.loading()';
   }
 
   @override
@@ -309,7 +309,7 @@ class _$LoadingImpl implements Loading {
   }
 }
 
-abstract class Loading implements AppState {
+abstract class Loading implements AuthState {
   const factory Loading() = _$LoadingImpl;
 }
 
@@ -324,7 +324,7 @@ abstract class _$$FailureImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$FailureImplCopyWithImpl<$Res>
-    extends _$AppStateCopyWithImpl<$Res, _$FailureImpl>
+    extends _$AuthStateCopyWithImpl<$Res, _$FailureImpl>
     implements _$$FailureImplCopyWith<$Res> {
   __$$FailureImplCopyWithImpl(
       _$FailureImpl _value, $Res Function(_$FailureImpl) _then)
@@ -354,7 +354,7 @@ class _$FailureImpl implements Failure {
 
   @override
   String toString() {
-    return 'AppState.failure(failedAppStateResponse: $failedAppStateResponse)';
+    return 'AuthState.failure(failedAppStateResponse: $failedAppStateResponse)';
   }
 
   @override
@@ -450,7 +450,7 @@ class _$FailureImpl implements Failure {
   }
 }
 
-abstract class Failure implements AppState {
+abstract class Failure implements AuthState {
   const factory Failure(final String failedAppStateResponse) = _$FailureImpl;
 
   String get failedAppStateResponse;
@@ -470,7 +470,7 @@ abstract class _$$SuccessImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$SuccessImplCopyWithImpl<$Res>
-    extends _$AppStateCopyWithImpl<$Res, _$SuccessImpl>
+    extends _$AuthStateCopyWithImpl<$Res, _$SuccessImpl>
     implements _$$SuccessImplCopyWith<$Res> {
   __$$SuccessImplCopyWithImpl(
       _$SuccessImpl _value, $Res Function(_$SuccessImpl) _then)
@@ -500,7 +500,7 @@ class _$SuccessImpl implements Success {
 
   @override
   String toString() {
-    return 'AppState.success(successfullAppStateResponse: $successfullAppStateResponse)';
+    return 'AuthState.success(successfullAppStateResponse: $successfullAppStateResponse)';
   }
 
   @override
@@ -598,7 +598,7 @@ class _$SuccessImpl implements Success {
   }
 }
 
-abstract class Success implements AppState {
+abstract class Success implements AuthState {
   const factory Success(final String successfullAppStateResponse) =
       _$SuccessImpl;
 

@@ -5,7 +5,7 @@ import 'package:flutter_chat_app/login/domain/entities/user.dart';
 import 'package:flutter_chat_app/login/domain/usecases/login_usecase.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../presentation/state/app_state.dart';
+import '../../shared/auth_state/auth_state.dart';
 
 final loginDataSourceProvider =
     Provider((ref) => LoginDataSourceImpl(dioClient: Dio()));
@@ -20,21 +20,21 @@ final loginUseCaseProvider = Provider<LoginUseCase>((ref) {
   return LoginUseCase(loginRepository: loginRepository);
 });
 
-final loginProvider = StateNotifierProvider<LoginNotifier, AppState>((ref) {
+final loginProvider = StateNotifierProvider<LoginNotifier, AuthState>((ref) {
   final loginUseCase = ref.read(loginUseCaseProvider);
   return LoginNotifier(loginUseCase);
 });
 
-class LoginNotifier extends StateNotifier<AppState> {
+class LoginNotifier extends StateNotifier<AuthState> {
   final LoginUseCase _loginUseCase;
 
-  LoginNotifier(this._loginUseCase) : super(const AppState.initial());
+  LoginNotifier(this._loginUseCase) : super(const AuthState.initial());
 
   Future<void> loginUser(UserCredentials userCredentials) async {
-    state = const AppState.loading();
+    state = const AuthState.loading();
     final response = await _loginUseCase.execute(userCredentials);
     state = response.$1 != null
-        ? AppState.success(response.$1!.message)
-        : AppState.failure(response.$2!.message!);
+        ? AuthState.success(response.$1!.message)
+        : AuthState.failure(response.$2!.message!);
   }
 }

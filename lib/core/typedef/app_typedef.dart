@@ -1,8 +1,5 @@
-import 'package:dartz/dartz.dart';
 
-import '../../login/data/models/failed_login_model.dart';
-import '../../login/data/models/successful_login_model.dart';
+import '../../chat_list/data/models/chat_list_response.dart';
 import '../../shared/api/typed_response.dart';
 
-typedef LoginResponse
-    = DataResponse<Either<SuccessfullLoginResponse, FailedLoginResponse>>;
+typedef ChatListData = DataResponse<ChatListResponse>;
