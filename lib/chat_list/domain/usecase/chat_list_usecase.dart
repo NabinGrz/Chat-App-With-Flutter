@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_chat_app/chat_list/domain/repositories/chat_list_repository.dart';
 import 'package:flutter_chat_app/core/typedef/app_typedef.dart';
 
+import '../../data/models/chat_reponse.dart';
+
 class GetAllChatListUseCase {
   final ChatListRepository chatListRepository;
 
@@ -12,5 +14,6 @@ class GetAllChatListUseCase {
     return await chatListRepository.getAllChats();
   }
 
-  // void addToStream(ChatListData event) => chatsListStream.add(event);
+  final chatsListStream = StreamController<List<Chat>?>.broadcast();
+  listenToNewChatEvents() {}
 }

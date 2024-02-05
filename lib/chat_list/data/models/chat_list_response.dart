@@ -1,8 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // To parse this JSON data, do
 //
 //     final chatListResponse = chatListResponseFromJson(jsonString);
 
 import 'dart:convert';
+
+import 'chat_reponse.dart';
 
 ChatListResponse chatListResponseFromJson(String str) =>
     ChatListResponse.fromJson(json.decode(str));
@@ -12,7 +15,7 @@ String chatListResponseToJson(ChatListResponse data) =>
 
 class ChatListResponse {
   int? statusCode;
-  List<Datum>? data;
+  List<Chat>? data;
   String? message;
   bool? success;
 
@@ -28,7 +31,7 @@ class ChatListResponse {
         statusCode: json["statusCode"],
         data: json["data"] == null
             ? []
-            : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+            : List<Chat>.from(json["data"]!.map((x) => Chat.fromJson(x))),
         message: json["message"],
         success: json["success"],
       );
@@ -41,65 +44,11 @@ class ChatListResponse {
         "message": message,
         "success": success,
       };
-}
 
-class Datum {
-  String? id;
-  String? name;
-  bool? isGroupChat;
-  List<Participant>? participants;
-  String? admin;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  int? v;
-  LastMessage? lastMessage;
-
-  Datum({
-    this.id,
-    this.name,
-    this.isGroupChat,
-    this.participants,
-    this.admin,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
-    this.lastMessage,
-  });
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["_id"],
-        name: json["name"],
-        isGroupChat: json["isGroupChat"],
-        participants: json["participants"] == null
-            ? []
-            : List<Participant>.from(
-                json["participants"]!.map((x) => Participant.fromJson(x))),
-        admin: json["admin"],
-        createdAt: json["createdAt"] == null
-            ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-        lastMessage: json["lastMessage"] == null
-            ? null
-            : LastMessage.fromJson(json["lastMessage"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "_id": id,
-        "name": name,
-        "isGroupChat": isGroupChat,
-        "participants": participants == null
-            ? []
-            : List<dynamic>.from(participants!.map((x) => x.toJson())),
-        "admin": admin,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-        "__v": v,
-        "lastMessage": lastMessage?.toJson(),
-      };
+  @override
+  String toString() {
+    return 'ChatListResponse(statusCode: $statusCode, data: $data, message: $message, success: $success)';
+  }
 }
 
 class LastMessage {
@@ -152,6 +101,11 @@ class LastMessage {
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
       };
+
+  @override
+  String toString() {
+    return 'LastMessage(id: $id, sender: $sender, content: $content, attachments: $attachments, chat: $chat, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+  }
 }
 
 class Sender {
@@ -180,6 +134,11 @@ class Sender {
         "username": username,
         "email": email,
       };
+
+  @override
+  String toString() {
+    return 'Sender(id: $id, avatar: $avatar, username: $username, email: $email)';
+  }
 }
 
 class Avatar {
@@ -204,6 +163,9 @@ class Avatar {
         "localPath": localPath,
         "_id": id,
       };
+
+  @override
+  String toString() => 'Avatar(url: $url, localPath: $localPath, id: $id)';
 }
 
 class Participant {
@@ -260,4 +222,9 @@ class Participant {
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
       };
+
+  @override
+  String toString() {
+    return 'Participant(id: $id, avatar: $avatar, username: $username, email: $email, role: $role, loginType: $loginType, isEmailVerified: $isEmailVerified, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+  }
 }

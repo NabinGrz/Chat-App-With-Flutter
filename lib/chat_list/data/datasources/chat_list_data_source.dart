@@ -17,14 +17,12 @@ class ChatListDataSourceImpl implements ChatListDataSource {
   Future<ChatListData> getAllChats() async {
     try {
       final sharedPreference = await SharedPreferences.getInstance();
+
       String? token = sharedPreference.getString('accessToken');
-      print(token);
       final response = await dioClient.get(Endpoints.chatListUrl,
           options: Options(headers: {
             ...{'Authorization': 'Bearer $token'}
           }));
-      print("NABIN---------------------------------------------");
-      print("NABIN${response.data}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = response.data;
         return ChatListData.success(ChatListResponse.fromJson(responseData));

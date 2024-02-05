@@ -26,9 +26,10 @@ class LoginDataSourceImpl implements LoginDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = response.data;
         final sharedPreference = await SharedPreferences.getInstance();
+        await sharedPreference.remove('accessToken');
         await sharedPreference.setString(
             'accessToken', responseData['data']['accessToken']);
-
+        print(responseData['data']['accessToken']);
         return (SuccessfullLoginResponse.fromJson(responseData), null);
       } else {
         return (null, FailedLoginResponse.fromJson(response.data));
