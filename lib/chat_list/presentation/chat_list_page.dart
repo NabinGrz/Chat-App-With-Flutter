@@ -10,7 +10,7 @@ class ChatListPage extends ConsumerWidget {
     final state = ref.watch(chatListProvider);
     final notifier = ref.read(chatListProvider.notifier);
 
-    notifier.listenToEventsFromSocket(context);
+    // notifier.listenToEventsFromSocket(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Chats"),
@@ -28,21 +28,53 @@ class ChatListPage extends ConsumerWidget {
                   builder: (context, snapshot) {
                     return snapshot.data == null
                         ? const Center(child: Text("No Chats Available!!"))
-                        : ListView.builder(
-                            itemCount: snapshot.data?.length,
+                        : ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(
+                                height: 6,
+                              );
+                            },
+                            itemCount: snapshot.data?.length ?? 0,
                             itemBuilder: (context, index) {
                               final current = snapshot.data?[index];
-                              return ListTile(
-                                // leading: stackedImage(current?.participants
-                                //     ?.map((e) => e.avatar?.url)
-                                //     .toList()),
-                                title: Text("${current?.name}"),
-                                subtitle: current?.isGroupChat == true &&
-                                        current?.lastMessage != null
-                                    ? Text(
-                                        "${current?.lastMessage?.sender?.username}: ${current?.lastMessage?.content}")
-                                    : Text(current?.lastMessage?.content ??
-                                        "No message yet"),
+                              return Container(
+                                decoration: current?.isNewChat == true
+                                    ? BoxDecoration(
+                                        color: Colors.green[50],
+                                        border: Border.all(
+                                            width: 2, color: Colors.green),
+                                        borderRadius: BorderRadius.circular(18))
+                                    : null,
+                                child: ListTile(
+                                  // leading: stackedImage(current?.participants
+                                  //     ?.map((e) => e.avatar?.url)
+                                  //     .toList()),
+                                  title: current?.isGroupChat == true
+                                      ? Text("${current?.name}")
+                                      : Text(
+                                          "${current?.participants?.last.username}"),
+                                  subtitle: current?.isGroupChat == true &&
+                                          current?.lastMessage != null
+                                      ? Text(
+                                          "${current?.lastMessage?.sender?.username}: ${current?.lastMessage?.content}")
+                                      : Text(current?.lastMessage?.content ??
+                                          "No message yet"),
+                                  trailing: current?.newChatCount != null &&
+                                          current!.newChatCount > 0
+                                      ? Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.green),
+                                          child: Text(
+                                            "${current.newChatCount}",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ))
+                                      : null,
+                                ),
                               );
                             },
                           );

@@ -71,8 +71,8 @@ class LoginPage extends ConsumerWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    final loginRepo = ref.read(loginProvider.notifier);
-                    await loginRepo.loginUser(
+                    final notifier = ref.read(loginProvider.notifier);
+                    await notifier.loginUser(
                       UserCredentials(
                         username: usernameController.text,
                         password: passwordController.text,
