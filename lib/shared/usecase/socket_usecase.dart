@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/socket_events.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+
+import '../../chat_list/data/models/chat_reponse.dart';
 
 class ChatSocketUseCase {
   Socket? chatSocket;
@@ -63,6 +66,14 @@ class ChatSocketUseCase {
     chatSocket?.onError((err) {
       _handleConnectionError(err.toString());
     });
+  }
+
+  Stream<Chat?> get newChatStream {
+    Chat? newChat;
+    chatSocket?.on(SocketEvents.newChatEvent, (data) {
+      newChat = Chat.fromJson(data as Map<String, dynamic>);
+    });
+    return newChat == null ? const Stream.empty() : Stream.value(newChat!);
   }
 
   void _handleConnectionSuccess() {

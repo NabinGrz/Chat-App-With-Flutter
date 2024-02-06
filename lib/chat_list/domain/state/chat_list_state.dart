@@ -17,10 +17,21 @@ enum ChatListAllState {
 class ChatListState {
   final ChatListAllState state;
   final ChatListData? data;
+  final bool isLoading;
+  final bool isDataLoaded;
 
-  ChatListState({required this.state, this.data});
+  ChatListState(
+      {required this.isDataLoaded,
+      required this.isLoading,
+      required this.state,
+      this.data});
 
-  ChatListState.initial({this.state = ChatListAllState.initial, this.data});
+  ChatListState.initial({
+    this.state = ChatListAllState.initial,
+    this.isLoading = false,
+    this.isDataLoaded = false,
+    this.data,
+  });
 
   @override
   bool operator ==(covariant ChatListState other) {
@@ -35,13 +46,15 @@ class ChatListState {
   @override
   String toString() => 'ChatListState(state: $state, data: $data)';
 
-  ChatListState copyWith({
-    ChatListAllState? state,
-    DataResponse<ChatListResponse>? data,
-  }) {
+  ChatListState copyWith(
+      {ChatListAllState? state,
+      DataResponse<ChatListResponse>? data,
+      required bool isLoading,
+      bool? isDataLoaded}) {
     return ChatListState(
-      state: state ?? this.state,
-      data: data ?? this.data,
-    );
+        state: state ?? this.state,
+        data: data ?? this.data,
+        isDataLoaded: isDataLoaded ?? this.isDataLoaded,
+        isLoading: isLoading);
   }
 }
