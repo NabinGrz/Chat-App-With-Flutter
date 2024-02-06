@@ -24,7 +24,7 @@ class Message {
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      id: json['id'],
+      id: json['_id'],
       sender: json['sender'] != null ? Sender.fromJson(json['sender']) : null,
       content: json['content'],
       attachments: json['attachments'],
@@ -33,20 +33,20 @@ class Message {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      v: json['v'],
+      v: json['__v'],
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
+    data['_id'] = id;
     data['sender'] = sender != null ? sender!.toJson() : null;
     data['content'] = content;
     data['attachments'] = attachments;
     data['chat'] = chat;
     data['createdAt'] = createdAt?.toIso8601String();
     data['updatedAt'] = updatedAt?.toIso8601String();
-    data['v'] = v;
+    data['__v'] = v;
     return data;
   }
 

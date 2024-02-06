@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter_chat_app/chat_list/data/models/message_reponse.dart';
+
 import 'chat_list_response.dart';
 
 class Chat {
@@ -10,7 +12,7 @@ class Chat {
   DateTime? createdAt;
   DateTime? updatedAt;
   int? v;
-  LastMessage? lastMessage;
+  Message? lastMessage;
 
   Chat({
     this.id,
@@ -42,7 +44,7 @@ class Chat {
         v: json["__v"],
         lastMessage: json["lastMessage"] == null
             ? null
-            : LastMessage.fromJson(json["lastMessage"]),
+            : Message.fromJson(json["lastMessage"]),
       );
 
   Map<String, dynamic> toJson() => {

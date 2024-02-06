@@ -1,8 +1,9 @@
 import 'dart:async';
-
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/chat_list/data/datasources/chat_list_data_source.dart';
+import 'package:flutter_chat_app/chat_list/data/models/message_reponse.dart';
 import 'package:flutter_chat_app/chat_list/data/repositories/chat_list_repository_impl.dart';
 import 'package:flutter_chat_app/chat_list/domain/repositories/chat_list_repository.dart';
 import 'package:flutter_chat_app/chat_list/domain/usecase/chat_list_usecase.dart';
@@ -100,6 +101,25 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               backgroundColor: Colors.green,
               content: Text("New Chat Alert!!")));
+        });
+    socketUseCase.listenToEvent(
+        eventName: SocketEvents.messageReceivedEvent,
+        handler: (value) {
+          // ? when new message is received
+          final newMessage = Message.fromJson(value as Map<String, dynamic>);
+          debugPrint("$newMessage");
+          if (chats != null) {
+            String foundChatId = chats
+                    ?.firstWhereOrNull(
+                        (element) => element.id == newMessage.chat)
+                    ?.id ??
+                "-";
+            int index = chats!.indexWhere((e) => e.id == foundChatId);
+            if (index >= 0) {
+              chats?[index].lastMessage = newMessage;
+              chatsListStream.sink.add(chats);
+            }
+          }
         });
 
     socketUseCase.listenToEvent(

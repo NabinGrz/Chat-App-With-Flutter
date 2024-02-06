@@ -51,63 +51,6 @@ class ChatListResponse {
   }
 }
 
-class LastMessage {
-  String? id;
-  Sender? sender;
-  String? content;
-  List<dynamic>? attachments;
-  String? chat;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  int? v;
-
-  LastMessage({
-    this.id,
-    this.sender,
-    this.content,
-    this.attachments,
-    this.chat,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
-  });
-
-  factory LastMessage.fromJson(Map<String, dynamic> json) => LastMessage(
-        id: json["_id"],
-        sender: json["sender"] == null ? null : Sender.fromJson(json["sender"]),
-        content: json["content"],
-        attachments: json["attachments"] == null
-            ? []
-            : List<dynamic>.from(json["attachments"]!.map((x) => x)),
-        chat: json["chat"],
-        createdAt: json["createdAt"] == null
-            ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
-            ? null
-            : DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "_id": id,
-        "sender": sender?.toJson(),
-        "content": content,
-        "attachments": attachments == null
-            ? []
-            : List<dynamic>.from(attachments!.map((x) => x)),
-        "chat": chat,
-        "createdAt": createdAt?.toIso8601String(),
-        "updatedAt": updatedAt?.toIso8601String(),
-        "__v": v,
-      };
-
-  @override
-  String toString() {
-    return 'LastMessage(id: $id, sender: $sender, content: $content, attachments: $attachments, chat: $chat, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
-  }
-}
-
 class Sender {
   String? id;
   Avatar? avatar;
