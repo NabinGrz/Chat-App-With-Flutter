@@ -27,8 +27,11 @@ class LoginDataSourceImpl implements LoginDataSource {
         final responseData = response.data;
         final sharedPreference = await SharedPreferences.getInstance();
         await sharedPreference.remove('accessToken');
+        await sharedPreference.remove('id');
         await sharedPreference.setString(
             'accessToken', responseData['data']['accessToken']);
+        await sharedPreference.setString(
+            'id', responseData['data']['user']['_id']);
         print(responseData['data']['accessToken']);
         return (SuccessfullLoginResponse.fromJson(responseData), null);
       } else {

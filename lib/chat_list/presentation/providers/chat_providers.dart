@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/chat_list/data/datasources/chat_list_data_source.dart';
+import 'package:flutter_chat_app/chat_list/data/datasources/chat_data_source.dart';
 import 'package:flutter_chat_app/chat_list/data/models/message_reponse.dart';
-import 'package:flutter_chat_app/chat_list/data/repositories/chat_list_repository_impl.dart';
-import 'package:flutter_chat_app/chat_list/domain/repositories/chat_list_repository.dart';
-import 'package:flutter_chat_app/chat_list/domain/usecase/chat_list_usecase.dart';
+import 'package:flutter_chat_app/chat_list/data/repositories/chat_repository_impl.dart';
+import 'package:flutter_chat_app/chat_list/domain/repositories/chat_repository.dart';
+import 'package:flutter_chat_app/chat_list/domain/usecase/get_all_chat_list_usecase.dart';
 import 'package:flutter_chat_app/main.dart';
 import 'package:flutter_chat_app/shared/usecase/socket_usecase.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,18 +14,23 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../core/constants/socket_events.dart';
 import '../../data/models/chat_reponse.dart';
 import '../../domain/state/chat_list_state.dart';
+import '../../domain/usecase/create_chat_usecase.dart';
 
-final chatListDataSourceProvider = Provider<ChatListDataSource>(
-    (ref) => ChatListDataSourceImpl(dioClient: Dio()));
+final chatDataSourceProvider =
+    Provider<ChatDataSource>((ref) => ChatDataSourceImpl(dioClient: Dio()));
 
-final chatListRepositoryProvider = Provider<ChatListRepository>((ref) {
-  final chatListDataSource = ref.watch(chatListDataSourceProvider);
-  return ChatListRepositoryImpl(chatListDataSource: chatListDataSource);
+final chatRepositoryProvider = Provider<ChatRepository>((ref) {
+  final chatDataSource = ref.watch(chatDataSourceProvider);
+  return ChatRepositoryImpl(chatDataSource: chatDataSource);
 });
 
-final useCaseProvider = Provider<GetAllChatListUseCase>((ref) {
-  final repo = ref.watch(chatListRepositoryProvider);
-  return GetAllChatListUseCase(chatListRepository: repo);
+final getAllChatUseCaseProvider = Provider<GetAllChatListUseCase>((ref) {
+  final repo = ref.watch(chatRepositoryProvider);
+  return GetAllChatListUseCase(chatRepository: repo);
+});
+final createChatUseCaseProvider = Provider<CreateChatUseCase>((ref) {
+  final repo = ref.watch(chatRepositoryProvider);
+  return CreateChatUseCase(chatRepository: repo);
 });
 
 //! Very very important: AUTO Dispose the provider as well to dispose the Socket Usecase*/
@@ -43,14 +48,17 @@ final chatSocketUseCaseProvider =
 final chatListProvider =
     StateNotifierProvider.autoDispose<ChatListNotifier, ChatListState>((ref) {
   return ChatListNotifier(
-      ref.read(useCaseProvider), ref.read(chatSocketUseCaseProvider));
+      ref.read(getAllChatUseCaseProvider), ref.read(chatSocketUseCaseProvider));
 });
 
 class ChatListNotifier extends StateNotifier<ChatListState> {
-  final GetAllChatListUseCase useCase;
+  final GetAllChatListUseCase getAllChatUseCase;
   final ChatSocketUseCase socketUseCase;
-  ChatListNotifier(this.useCase, this.socketUseCase)
-      : super(ChatListState.initial()) {
+
+  ChatListNotifier(
+    this.getAllChatUseCase,
+    this.socketUseCase,
+  ) : super(ChatListState.initial()) {
     getAllChatList().then((value) => addChatList(state.data?.data?.data));
 
     //! Overall, this approach ensures that the 'socket-related initialization code' executes after the provider
@@ -79,7 +87,7 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
   Future<void> getAllChatList() async {
     state = state.copyWith(
         state: ChatListAllState.loading, data: null, isLoading: true);
-    final data = await useCase.execute();
+    final data = await getAllChatUseCase.execute();
     if (data.data?.statusCode == 200 || data.data?.statusCode == 201) {
       state = state.copyWith(
         state: ChatListAllState.fetchedAllProducts,
@@ -138,8 +146,6 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
                 "-";
             int index = chats.indexWhere((e) => e.id == foundChatId);
             if (index >= 0) {
-              // chats[index].copyWith(
-              // lastMessage: newMessage, isNewChat: true, newChatCount: 1);
               chats[index].lastMessage = newMessage;
               chats[index].isNewChat = true;
               chats[index].newChatCount += 1;
@@ -166,5 +172,29 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
         }
       },
     );
+  }
+}
+
+final createChatProvider = ChangeNotifierProvider<CreateChatNotifier>((ref) {
+  final notifier = ref.read(chatListProvider.notifier);
+  return CreateChatNotifier(
+      createChatUseCase: ref.read(createChatUseCaseProvider),
+      notifier: notifier);
+});
+
+class CreateChatNotifier extends ChangeNotifier {
+  final CreateChatUseCase createChatUseCase;
+  final ChatListNotifier notifier;
+
+  CreateChatNotifier({required this.notifier, required this.createChatUseCase});
+  bool isCreating = false;
+  bool isSuccess = false;
+  Future<void> createChat() async {
+    isCreating = true;
+    final statuseCode = await createChatUseCase.execute();
+    isCreating = true;
+    isSuccess = statuseCode == 200;
+    await notifier.getAllChatList();
+    notifyListeners();
   }
 }
