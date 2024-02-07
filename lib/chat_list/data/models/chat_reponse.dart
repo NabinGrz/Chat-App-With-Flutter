@@ -29,6 +29,29 @@ class Chat {
     this.newChatCount = 0,
   });
 
+  String? get senderUsername => lastMessage?.sender?.username;
+  DateTime get lastMsgDate => lastMessage?.createdAt ?? DateTime.now();
+  String? get content => lastMessage?.content;
+  String? get lastParticipantName => participants?.last.username;
+  bool get isGrpChatAndHasLastMessage =>
+      isGroupChat == true && lastMessage != null;
+  bool get hasNewChat => newChatCount > 0;
+  String get senderMessage => "$senderUsername: $content";
+  String get msgOrNo => content ?? "No message yet";
+  String get chatSubtitle =>
+      isGrpChatAndHasLastMessage ? senderMessage : msgOrNo;
+  String? get chatTitle => isGroupChat == true ? name : lastParticipantName;
+  DateTime? get chatTime => createdAt;
+  DateTime? get chatUTime => updatedAt;
+  Duration get differenceD => DateTime.now().difference(lastMsgDate);
+
+  String get time => differenceD.inHours > 0
+      ? differenceD.inHours <= 1
+          ? "an hour"
+          : "${differenceD.inHours} hours"
+      : differenceD.inMinutes > 0
+          ? "${differenceD.inMinutes} minutes"
+          : "a few seconds";
   factory Chat.fromJson(Map<String, dynamic> json) => Chat(
         id: json["_id"],
         name: json["name"],
@@ -71,32 +94,5 @@ class Chat {
   @override
   String toString() {
     return 'Chat(id: $id, name: $name, isGroupChat: $isGroupChat, participants: $participants, admin: $admin, createdAt: $createdAt, updatedAt: $updatedAt, v: $v, lastMessage: $lastMessage)';
-  }
-
-  Chat copyWith(
-      {String? id,
-      String? name,
-      bool? isGroupChat,
-      List<Participant>? participants,
-      String? admin,
-      DateTime? createdAt,
-      DateTime? updatedAt,
-      int? v,
-      Message? lastMessage,
-      bool? isNewChat,
-      int? newChatCount}) {
-    return Chat(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      isGroupChat: isGroupChat ?? this.isGroupChat,
-      participants: participants ?? this.participants,
-      admin: admin ?? this.admin,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      v: v ?? this.v,
-      lastMessage: lastMessage ?? this.lastMessage,
-      isNewChat: isNewChat ?? this.isNewChat,
-      newChatCount: (newChatCount ?? this.newChatCount) ?? 0 + 1,
-    );
   }
 }
