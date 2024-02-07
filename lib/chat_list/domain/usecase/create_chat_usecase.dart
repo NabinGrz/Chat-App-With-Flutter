@@ -7,7 +7,7 @@ class CreateChatUseCase {
 
   CreateChatUseCase({required this.chatRepository});
 
-  Future<int> execute() async {
-    return await chatRepository.createChats();
+  Future<int> execute(String id) async {
+    return await chatRepository.createChats(id);
   }
 }

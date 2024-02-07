@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:collection/collection.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/chat_list/data/datasources/chat_data_source.dart';
 import 'package:flutter_chat_app/chat_list/data/models/message_reponse.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_chat_app/chat_list/data/repositories/chat_repository_imp
 import 'package:flutter_chat_app/chat_list/domain/repositories/chat_repository.dart';
 import 'package:flutter_chat_app/chat_list/domain/usecase/get_all_chat_list_usecase.dart';
 import 'package:flutter_chat_app/main.dart';
+import 'package:flutter_chat_app/shared/providers/global_providers.dart';
 import 'package:flutter_chat_app/shared/usecase/socket_usecase.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rxdart/subjects.dart';
@@ -17,8 +17,8 @@ import '../../data/models/chat_reponse.dart';
 import '../../domain/state/chat_list_state.dart';
 import '../../domain/usecase/create_chat_usecase.dart';
 
-final chatDataSourceProvider =
-    Provider<ChatDataSource>((ref) => ChatDataSourceImpl(dioClient: Dio()));
+final chatDataSourceProvider = Provider<ChatDataSource>(
+    (ref) => ChatDataSourceImpl(dioClient: ref.watch(dioClientProvider)));
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   final chatDataSource = ref.watch(chatDataSourceProvider);
@@ -28,10 +28,6 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 final getAllChatUseCaseProvider = Provider<GetAllChatListUseCase>((ref) {
   final repo = ref.watch(chatRepositoryProvider);
   return GetAllChatListUseCase(chatRepository: repo);
-});
-final createChatUseCaseProvider = Provider<CreateChatUseCase>((ref) {
-  final repo = ref.watch(chatRepositoryProvider);
-  return CreateChatUseCase(chatRepository: repo);
 });
 
 //! Very very important: AUTO Dispose the provider as well to dispose the Socket Usecase*/
@@ -189,28 +185,5 @@ class ChatListNotifier extends StateNotifier<ChatListState> {
         }
       },
     );
-  }
-}
-
-final createChatProvider = ChangeNotifierProvider<CreateChatNotifier>((ref) {
-  final notifier = ref.read(chatListProvider.notifier);
-  return CreateChatNotifier(
-      createChatUseCase: ref.read(createChatUseCaseProvider),
-      notifier: notifier);
-});
-
-class CreateChatNotifier extends ChangeNotifier {
-  final CreateChatUseCase createChatUseCase;
-  final ChatListNotifier notifier;
-
-  CreateChatNotifier({required this.notifier, required this.createChatUseCase});
-  bool isCreating = false;
-  bool isSuccess = false;
-  Future<void> createChat() async {
-    isCreating = true;
-    final statuseCode = await createChatUseCase.execute();
-    isCreating = false;
-    isSuccess = statuseCode == 200;
-    notifyListeners();
   }
 }

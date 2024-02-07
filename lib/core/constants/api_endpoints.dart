@@ -5,4 +5,5 @@ class Endpoints {
   static const registerUrl = "$baseUrl/users/register";
   static const chatsUrl = "$baseUrl/chat-app/chats";
   static const chatUsersUrl = "$baseUrl/chat-app/chats/users";
+  static const createGroupUrl = "$baseUrl/chat-app/chats/group";
 }
