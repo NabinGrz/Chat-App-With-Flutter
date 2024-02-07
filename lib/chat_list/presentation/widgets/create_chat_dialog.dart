@@ -90,7 +90,9 @@ class CreateChatDialog extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 await notifier.createChat();
-                // await chatListNotifier.getAllChatList();
+                await chatListNotifier
+                    .getAllChatList()
+                    .then((_) => chatListNotifier.addChatList());
                 Navigator.pop(context);
               },
               child: const Text("Create"),

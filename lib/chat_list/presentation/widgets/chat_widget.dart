@@ -67,13 +67,19 @@ class ChatWidgetCard extends StatelessWidget {
                       ),
                       current.hasNewChat
                           ? Container(
+                              // height: 15,
+                              // width: 15,
+                              alignment: Alignment.center,
                               padding: const EdgeInsets.all(5),
                               decoration: const BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.green),
+                                shape: BoxShape.circle,
+                                color: Colors.green,
+                              ),
                               child: Text(
                                 "${current.newChatCount}",
                                 style: const TextStyle(
                                   color: Colors.white,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ))

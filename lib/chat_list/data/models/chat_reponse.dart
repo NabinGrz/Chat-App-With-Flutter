@@ -46,7 +46,9 @@ class Chat {
   Duration get differenceD => DateTime.now().difference(lastMsgDate);
 
   String get time => differenceD.inHours > 0
-      ? "${differenceD.inHours} hours"
+      ? differenceD.inHours <= 1
+          ? "an hour"
+          : "${differenceD.inHours} hours"
       : differenceD.inMinutes > 0
           ? "${differenceD.inMinutes} minutes"
           : "a few seconds";
