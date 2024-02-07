@@ -15,7 +15,6 @@ import 'package:rxdart/subjects.dart';
 import '../../../core/constants/socket_events.dart';
 import '../../data/models/chat_reponse.dart';
 import '../../domain/state/chat_list_state.dart';
-import '../../domain/usecase/create_chat_usecase.dart';
 
 final chatDataSourceProvider = Provider<ChatDataSource>(
     (ref) => ChatDataSourceImpl(dioClient: ref.watch(dioClientProvider)));

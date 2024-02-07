@@ -17,6 +17,8 @@ final userUseCaseProvider = Provider<UserUseCase>((ref) {
   return UserUseCase(userRepository: ref.watch(userRepositoryProvider));
 });
 
+final userNameProvider = StateProvider<String?>((ref) => null);
+final groupNameProvider = StateProvider<String?>((ref) => null);
 final userIdProvider = StateProvider<String?>((ref) => null);
 final isGroupChatProvider = StateProvider<bool>((ref) => false);
 final participantsProvider = StateProvider<List<Datum>?>((ref) => null);

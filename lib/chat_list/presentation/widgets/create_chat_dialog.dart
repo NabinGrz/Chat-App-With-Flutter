@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/chat_list/domain/entities/group_data_model.dart';
 import 'package:flutter_chat_app/chat_list/presentation/providers/user_providers.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../data/models/user_model.dart';
 import '../providers/chat_providers.dart';
 import '../providers/create_chat_providers.dart';
-
-// List<String> testList = ["nabin", "subin", "gurung", "sumita"];
+import 'participants_widget.dart';
+import 'user_text_field.dart';
 
 class CreateChatDialog extends ConsumerWidget {
   CreateChatDialog({super.key});
@@ -19,10 +18,23 @@ class CreateChatDialog extends ConsumerWidget {
     final notifier = ref.read(createChatProvider.notifier);
     final chatListNotifier = ref.read(chatListProvider.notifier);
     final userController = TextEditingController();
-    final groupNameController = TextEditingController();
+    // final groupNameController = TextEditingController();
     final userState = ref.watch(userProvider);
-    // final isGroupChat = ref.watch(isGroupChatProvider);
-    // final participants = ref.watch(participantsProvider);
+    final isGroupChat = ref.watch(isGroupChatProvider);
+
+    Future<void> reset() async {
+      notifier.reset();
+      await chatListNotifier
+          .getAllChatList()
+          .then((_) => chatListNotifier.addChatList())
+          .then((value) => Navigator.pop(context));
+      ref.read(userIdProvider.notifier).state = null;
+      ref.read(userNameProvider.notifier).state = null;
+      ref.read(groupNameProvider.notifier).state = null;
+      ref.read(participantsProvider.notifier).state = [];
+      userController.clear();
+    }
+
     return PopScope(
       canPop: false,
       child: AlertDialog.adaptive(
@@ -51,8 +63,10 @@ class CreateChatDialog extends ConsumerWidget {
                                   ref
                                       .read(participantsProvider.notifier)
                                       .state = [];
-                                  userController.clear();
-                                  groupNameController.clear();
+                                  ref.read(groupNameProvider.notifier).state =
+                                      null;
+                                  ref.read(userNameProvider.notifier).state =
+                                      null;
                                 });
                           },
                         ),
@@ -73,12 +87,14 @@ class CreateChatDialog extends ConsumerWidget {
                     ),
                     if (ref.watch(isGroupChatProvider)) ...{
                       TextField(
-                          controller: groupNameController,
-                          decoration: const InputDecoration(
-                            hintText: "Enter a group name...",
-                            border: OutlineInputBorder(),
-                            // labelText: 'User',
-                          )),
+                        decoration: const InputDecoration(
+                          hintText: "Enter a group name...",
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          ref.read(groupNameProvider.notifier).state = value;
+                        },
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -87,55 +103,10 @@ class CreateChatDialog extends ConsumerWidget {
                         data: (data) {
                           List<Datum?>? nameList = data.data;
                           return nameList != null
-                              ? TypeAheadField<Datum?>(
-                                  controller: userController,
-                                  suggestionsCallback: (search) {
-                                    return nameList
-                                        .where((element) =>
-                                            (element?.username
-                                                    ?.toLowerCase()
-                                                    .contains(
-                                                        search.toLowerCase()) ??
-                                                false) &&
-                                            search.isNotEmpty)
-                                        .toList();
-                                  },
-                                  builder: (context, controller, focusNode) {
-                                    return TextField(
-                                        controller: controller,
-                                        focusNode: focusNode,
-                                        autofocus: false,
-                                        decoration: const InputDecoration(
-                                          hintText: "Select a user to chat....",
-                                          border: OutlineInputBorder(),
-                                        ));
-                                  },
-                                  itemBuilder: (context, name) {
-                                    return ListTile(
-                                      title: Text(name?.username ?? ""),
-                                    );
-                                  },
-                                  hideOnEmpty: true,
-                                  onSelected: (name) {
-                                    // FocusScope.of(context).unfocus();
-                                    if (!ref.watch(isGroupChatProvider)) {
-                                      ref.read(userIdProvider.notifier).state =
-                                          name?.id;
-                                    } else {
-                                      if (name != null) {
-                                        ref
-                                            .read(participantsProvider.notifier)
-                                            .state = [
-                                          ...ref.watch(participantsProvider) ??
-                                              [],
-                                          name
-                                        ];
-                                      }
-                                    }
-                                    userController.text = name?.username ?? "";
-                                    groupNameController.text = "Testing";
-                                  },
-                                )
+                              ? UserTextField(
+                                  nameList: nameList,
+                                  userController: userController,
+                                  isGroupChat: isGroupChat)
                               : const Text("No users");
                         },
                         error: (_, __) => const Text("error"),
@@ -143,53 +114,7 @@ class CreateChatDialog extends ConsumerWidget {
                               child: CircularProgressIndicator.adaptive(),
                             )),
                     if (ref.watch(isGroupChatProvider)) ...{
-                      Consumer(
-                        builder: (context, ref, child) {
-                          return Wrap(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              children: List.generate(
-                                  ref.watch(participantsProvider)?.length ?? 0,
-                                  (index) {
-                            final user =
-                                ref.watch(participantsProvider)?[index];
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Chip(
-                                  label: Text(
-                                    "${user?.username}",
-                                  ),
-                                  deleteIcon: const Icon(Icons.clear),
-                                  onDeleted: () {
-                                    int? index = ref
-                                            .watch(participantsProvider)
-                                            ?.indexWhere((element) =>
-                                                element.id == user?.id) ??
-                                        0;
-                                    Datum? current =
-                                        ref.watch(participantsProvider)?[index];
-                                    if (index >= 0) {
-                                      ref
-                                          .read(participantsProvider.notifier)
-                                          .state = [
-                                        ...ref
-                                                .watch(participantsProvider)
-                                                ?.where((element) =>
-                                                    element.id !=
-                                                    current?.id) ??
-                                            [],
-                                      ];
-                                    }
-                                  },
-                                ),
-                                const SizedBox(
-                                  width: 2,
-                                ),
-                              ],
-                            );
-                          }));
-                        },
-                      )
+                      const ParticipantsWidget()
                     },
                     const SizedBox(
                       height: 10,
@@ -197,58 +122,51 @@ class CreateChatDialog extends ConsumerWidget {
                   ],
                 ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ref.read(userIdProvider.notifier).state = null;
-              userController.clear();
-            },
-            child: const Text("Close"),
-          ),
-          TextButton(
-            onPressed: () async {
-              final selectedID = ref.read(userIdProvider.notifier).state;
-
-              if (ref.watch(isGroupChatProvider)) {
-                final selectedParticipants = ref
-                        .watch(participantsProvider)
-                        ?.map((e) => e.id ?? "")
-                        .toList() ??
-                    [];
-                if (selectedParticipants.isNotEmpty) {
-                  await notifier.createGroupChat(GroupDataModel(
-                      name: groupNameController.text,
-                      participants: selectedParticipants));
-                  notifier.reset();
-                  await chatListNotifier
-                      .getAllChatList()
-                      .then((_) => chatListNotifier.addChatList());
-                  Navigator.pop(context);
-                  ref.read(userIdProvider.notifier).state = null;
-                  userController.clear();
-                  groupNameController.clear();
-                  ref.read(participantsProvider.notifier).state = [];
-                }
-              } else {
-                if (selectedID != null) {
-                  await notifier.createChat(selectedID);
-                  notifier.reset();
-                  await chatListNotifier
-                      .getAllChatList()
-                      .then((_) => chatListNotifier.addChatList());
-                  Navigator.pop(context);
-                  ref.read(userIdProvider.notifier).state = null;
-                  userController.clear();
-                  groupNameController.clear();
-                  ref.read(participantsProvider.notifier).state = [];
-                }
-              }
-            },
-            child: const Text("Create"),
-          ),
-        ],
+        actions: dialogActions(context, ref, userController, notifier, reset),
       ),
     );
+  }
+
+  List<Widget> dialogActions(
+      BuildContext context,
+      WidgetRef ref,
+      TextEditingController userController,
+      CreateChatNotifier notifier,
+      Future<void> Function() reset) {
+    return [
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+          ref.read(userIdProvider.notifier).state = null;
+          ref.read(userNameProvider.notifier).state = null;
+          userController.clear();
+        },
+        child: const Text("Close"),
+      ),
+      TextButton(
+        onPressed: () async {
+          final selectedID = ref.read(userIdProvider.notifier).state;
+          if (ref.watch(isGroupChatProvider)) {
+            final selectedParticipants = ref
+                    .watch(participantsProvider)
+                    ?.map((e) => e.id ?? "")
+                    .toList() ??
+                [];
+            if (selectedParticipants.isNotEmpty) {
+              await notifier.createGroupChat(GroupDataModel(
+                  name: ref.watch(groupNameProvider) ?? "",
+                  participants: selectedParticipants));
+              await reset();
+            }
+          } else {
+            if (selectedID != null) {
+              await notifier.createChat(selectedID);
+              await reset();
+            }
+          }
+        },
+        child: const Text("Create"),
+      ),
+    ];
   }
 }

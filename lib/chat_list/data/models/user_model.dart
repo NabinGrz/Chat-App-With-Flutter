@@ -5,6 +5,7 @@
 
 import 'dart:convert';
 
+
 import 'chat_list_response.dart';
 
 UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
@@ -76,5 +77,20 @@ class Datum {
   @override
   String toString() {
     return 'Datum(id: $id, avatar: $avatar, username: $username, email: $email)';
+  }
+
+  @override
+  bool operator ==(covariant Datum other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.avatar == avatar &&
+        other.username == username &&
+        other.email == email;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ avatar.hashCode ^ username.hashCode ^ email.hashCode;
   }
 }
