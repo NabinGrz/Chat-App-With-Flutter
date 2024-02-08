@@ -4,7 +4,7 @@ import 'package:flutter_chat_app/core/constants/socket_events.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-import '../../chat_list/data/models/chat_reponse.dart';
+import '../../features/chat_list/data/models/chat_reponse.dart';
 
 class ChatSocketUseCase {
   Socket? chatSocket;

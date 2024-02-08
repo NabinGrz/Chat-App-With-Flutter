@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/chat_list/presentation/chat_list_page.dart';
-import 'package:flutter_chat_app/register/presentation/register_page.dart';
+import 'package:flutter_chat_app/features/chat_list/presentation/chat_list_page.dart';
+import 'package:flutter_chat_app/features/register/presentation/register_page.dart';
 
-import '../../login/presentation/login_page.dart';
+import '../../features/login/presentation/login_page.dart';
 
 class AppRouter {
   const AppRouter._();
