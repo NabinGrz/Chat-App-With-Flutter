@@ -4,6 +4,7 @@ import 'package:flutter_chat_app/features/chat_list/data/models/chat_reponse.dar
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../chat/presentation/providers/private_chat_providers.dart';
+import 'stacked_image.dart';
 
 class ChatWidgetCard extends ConsumerWidget {
   const ChatWidgetCard({
@@ -16,8 +17,10 @@ class ChatWidgetCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
         ref.read(userIDProvider.notifier).state = current.id ?? "";
+        print(current.id);
+
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -42,9 +45,8 @@ class ChatWidgetCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  // leading: stackedImage(current?.participants
-                  //     ?.map((e) => e.avatar?.url)
-                  //     .toList()),
+                  stackedImage(
+                      current.participants?.map((e) => e.avatar?.url).toList()),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -55,12 +57,27 @@ class ChatWidgetCard extends ConsumerWidget {
                           fontSize: 20,
                         ),
                       ),
-                      Text(
-                        current.chatSubtitle,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w300,
-                            color: Colors.blueGrey,
-                            fontSize: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          if (current.hasAttachment) ...{
+                            const RotationTransition(
+                              turns: AlwaysStoppedAnimation(60 / 360),
+                              child: Icon(
+                                Icons.attach_file_outlined,
+                                size: 16,
+                                color: Colors.grey,
+                              ),
+                            )
+                          },
+                          Text(
+                            current.chatSubtitle,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: Colors.blueGrey,
+                                fontSize: 16),
+                          ),
+                        ],
                       ),
                     ],
                   ),

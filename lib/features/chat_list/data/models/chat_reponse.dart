@@ -31,12 +31,16 @@ class Chat {
 
   String? get senderUsername => lastMessage?.sender?.username;
   DateTime get lastMsgDate => lastMessage?.createdAt ?? DateTime.now();
-  String? get content => lastMessage?.content;
+  bool get hasAttachment => (lastMessage?.attachments != null &&
+      lastMessage!.attachments!.isNotEmpty);
+  String? get content => hasAttachment
+      ? " ${lastMessage?.attachments?.length} attachment"
+      : lastMessage?.content;
   String? get lastParticipantName => participants?.last.username;
   bool get isGrpChatAndHasLastMessage =>
       isGroupChat == true && lastMessage != null;
   bool get hasNewChat => newChatCount > 0;
-  String get senderMessage => "$senderUsername: $content";
+  String get senderMessage => "${senderUsername?.trim()}: $content";
   String get msgOrNo => content ?? "No message yet";
   String get chatSubtitle =>
       isGrpChatAndHasLastMessage ? senderMessage : msgOrNo;

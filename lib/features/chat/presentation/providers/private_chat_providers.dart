@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/socket_events.dart';
 import 'package:flutter_chat_app/features/chat/data/datasources/private_chat_data_source.dart';
 import 'package:flutter_chat_app/features/chat/data/models/private_chat_model.dart';
 import 'package:flutter_chat_app/features/chat/data/repositories/private_chat_repositories_impl.dart';
@@ -32,12 +33,14 @@ final privateChatProvider =
               privateChatUseCase: ref.watch(privateChatUseCaseProvider),
               userID: ref.watch(userIDProvider),
               chatSocketUseCase: ref.watch(chatSocketUseCaseProvider),
+              // ref.read(provider)
             ));
 
 final userIDProvider = StateProvider<String>((ref) => "");
 final myUserIDProvider = StateProvider<String>((ref) => "");
 final showIconProvider = StateProvider<bool>((ref) => false);
 final selectedImagesProvider = StateProvider<File?>((ref) => null);
+final typingProvider = StateProvider<bool>((ref) => false);
 
 final dataProvider = FutureProvider((ref) async {
   final preference = await SharedPreferences.getInstance();
@@ -50,6 +53,8 @@ class PrivateChatNotifier extends ChangeNotifier {
   final ChatSocketUseCase chatSocketUseCase;
   bool isLoading = false;
   bool messageSend = false;
+  bool isTyping = false;
+  String? typingUser;
   String? errorMessage;
   PrivateChatNotifier({
     required this.userID,
@@ -70,6 +75,7 @@ class PrivateChatNotifier extends ChangeNotifier {
   List<Message>? get chats => streamController.valueOrNull;
   initialize() async {
     await getMessages(userID);
+    await joinChat(userID);
     await Future.delayed(const Duration(seconds: 1), () {
       chatSocketUseCase.messageReceivedEvent(
         (message) {
@@ -77,6 +83,22 @@ class PrivateChatNotifier extends ChangeNotifier {
           if (chats != null) {
             streamController.add([...chats!, message]);
           }
+        },
+      );
+      chatSocketUseCase.typingEvent(
+        (id) {
+          print("USER TYPING: $id");
+          isTyping = true;
+          typingUser = id;
+          notifyListeners();
+        },
+      );
+      chatSocketUseCase.stoptypingEvent(
+        (id) {
+          print("USER TYPING: $id");
+          isTyping = false;
+          typingUser = id;
+          notifyListeners();
         },
       );
     });
@@ -115,4 +137,16 @@ class PrivateChatNotifier extends ChangeNotifier {
   }
 
   _addMessage(List<Message> messages) => streamController.add(messages);
+
+  void startTyping(String id) {
+    chatSocketUseCase.emitTypingEvent(id);
+  }
+
+  void stopTyping(String id) {
+    chatSocketUseCase.emitStopTypingEvent(id);
+  }
+
+  Future<void> joinChat(String id) async {
+    chatSocketUseCase.joinChatEvent(id);
+  }
 }

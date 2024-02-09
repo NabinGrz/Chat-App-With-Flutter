@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/shared/providers/global_providers.dart';
@@ -6,13 +8,39 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'providers/private_chat_providers.dart';
 import 'widgets/messages_list_view_widget.dart';
 
-class ChatScreen extends ConsumerWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   final String username;
   final String id;
-  const ChatScreen(this.username, this.id, {super.key});
+
+  const ChatScreen(this.username, this.id, {Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  get username => widget.username;
+  get id => widget.id;
+  Timer? _checkTypingTimer;
+  startTimer() {
+    _checkTypingTimer = Timer(const Duration(milliseconds: 600), () {
+      ref.read(privateChatProvider.notifier).stopTyping(id);
+    });
+  }
+
+  resetTimer() {
+    _checkTypingTimer?.cancel();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    _checkTypingTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(privateChatProvider);
     final messageController = TextEditingController();
     final img = ref.watch(selectedImagesProvider);
@@ -148,6 +176,15 @@ class ChatScreen extends ConsumerWidget {
                                           ref
                                               .read(showIconProvider.notifier)
                                               .state = value != "";
+                                          resetTimer();
+
+                                          ref
+                                              .read(typingProvider.notifier)
+                                              .state = true;
+                                          ref
+                                              .read(
+                                                  privateChatProvider.notifier)
+                                              .startTyping(id);
                                         },
                                         style: const TextStyle(fontSize: 16),
                                       ),

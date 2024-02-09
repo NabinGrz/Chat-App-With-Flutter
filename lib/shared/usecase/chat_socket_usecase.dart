@@ -36,6 +36,40 @@ class ChatSocketUseCase {
     );
   }
 
+  void joinChatEvent(String id) {
+    socketUseCase.emit(eventName: SocketEvents.joinChatEvent, data: id);
+  }
+
+  void typingEvent(Function(String id) onTyping) {
+    socketUseCase.listenToEvent(
+      eventName: SocketEvents.typingEvent,
+      handler: (userID) {
+        final id = userID.toString();
+        onTyping(id);
+        print(id);
+      },
+    );
+  }
+
+  void stoptypingEvent(Function(String id) onStopTyping) {
+    socketUseCase.listenToEvent(
+      eventName: SocketEvents.stopTypingEvent,
+      handler: (userID) {
+        final id = userID.toString();
+        onStopTyping(id);
+        print(id);
+      },
+    );
+  }
+
+  void emitTypingEvent(String id) {
+    socketUseCase.chatSocket?.emit(SocketEvents.typingEvent, id);
+  }
+
+  void emitStopTypingEvent(String id) {
+    socketUseCase.chatSocket?.emit(SocketEvents.stopTypingEvent, id);
+  }
+
   void dispose() {
     socketUseCase.dispose();
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_content_widget.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_image_card.dart';
+import 'package:flutter_chat_app/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../chat_list/data/models/message_reponse.dart';
@@ -25,6 +26,42 @@ class MessagesListViewWidget extends ConsumerWidget {
         reverse: true,
         controller: controller,
         children: [
+          if (ref.read(privateChatProvider.notifier).isTyping) ...{
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.orange,
+                  ),
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundImage: data.first.sender?.avatar?.url == null
+                        ? const NetworkImage(
+                            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png")
+                        : NetworkImage(data.first.sender?.avatar?.url ?? ""),
+                  ),
+                ),
+                // const SizedBox(width: 6),
+                const Expanded(
+                  child: TypingIndicator(
+                    circleHeight: 10,
+                    circleWidth: 10,
+                    indicatorHeight: 30,
+                    indicatorWidth: 60,
+                    showIndicator: true,
+                    bubbleColor: Color.fromARGB(255, 174, 177, 178),
+                    flashingCircleBrightColor: Color(0xFF333333),
+                    flashingCircleDarkColor: Color(0xFFaec1dd),
+                  ),
+                ),
+              ],
+            )
+          },
+          const SizedBox(
+            height: 10,
+          ),
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
@@ -71,8 +108,9 @@ class MessagesListViewWidget extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 MessageImageCard(
-                                    imageUrl:
-                                        "${message.attachments?.first.url}"),
+                                  imageUrl: "${message.attachments?.first.url}",
+                                  isMyMessage: isMyMessage,
+                                ),
                                 MessageContentCard(
                                     index: index,
                                     data: data,
@@ -83,6 +121,7 @@ class MessagesListViewWidget extends ConsumerWidget {
                           : message.attachments != null &&
                                   message.attachments!.isNotEmpty
                               ? MessageImageCard(
+                                  isMyMessage: isMyMessage,
                                   imageUrl: "${message.attachments?.first.url}")
                               : MessageContentCard(
                                   index: index,

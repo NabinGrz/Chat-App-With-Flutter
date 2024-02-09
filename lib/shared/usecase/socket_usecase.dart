@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-
 class SocketUseCase {
   Socket? chatSocket;
 
@@ -46,6 +45,12 @@ class SocketUseCase {
     listenToEvent(
       eventName: 'connection',
       handler: (_) => _handleConnectionSuccess(),
+    );
+    listenToEvent(
+      eventName: 'typing',
+      handler: (data) {
+        print(data);
+      },
     );
 
     listenToEvent(
