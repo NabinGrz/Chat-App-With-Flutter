@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,29 +13,92 @@ class ChatScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(privateChatProvider);
+    final messageController = TextEditingController();
     ref.read(dataProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(username),
       ),
       body: Consumer(builder: (context, ref, child) {
-        return state.isLoading
-            ? const Center(
-                child: CircularProgressIndicator.adaptive(),
-              )
-            : StreamBuilder(
-                stream: ref.read(privateChatProvider.notifier).streamController,
-                builder: (context, snapshot) {
-                  return Padding(
+        return StreamBuilder(
+          stream: ref.read(privateChatProvider.notifier).streamController,
+          builder: (context, snapshot) {
+            return state.isLoading
+                //  ||
+                //         snapshot.connectionState != ConnectionState.
+                ? const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  )
+                : Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: !snapshot.hasData && snapshot.data == null
-                        ? const Center(
-                            child: Text("No messages yet!!"),
-                          )
-                        : MessagesListViewWidget(data: snapshot.data!, id: id),
+                    child: Column(
+                      children: [
+                        !snapshot.hasData && snapshot.data == null
+                            ? Expanded(
+                                child: Center(
+                                  child: Text(
+                                      "No messages yet!! ${snapshot.connectionState}"),
+                                ),
+                              )
+                            : MessagesListViewWidget(
+                                data: snapshot.data!, id: id),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          margin: const EdgeInsets.only(bottom: 25),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.add_a_photo_outlined),
+                                onPressed: () {
+                                  // Implement send functionality
+                                },
+                              ),
+                              Expanded(
+                                child: TextField(
+                                  controller: messageController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Type a message",
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(0),
+                                  ),
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                              // messageController.text.isEmpty
+                              //     ? const SizedBox()
+                              //     :
+                              Consumer(builder: (context, ref, child) {
+                                return ref
+                                        .read(privateChatProvider.notifier)
+                                        .isLoading
+                                    ? const CircularProgressIndicator()
+                                    : IconButton(
+                                        icon: const Icon(Icons.send),
+                                        onPressed: () async {
+                                          final data = FormData.fromMap({
+                                            'content': messageController.text
+                                          });
+                                          await ref
+                                              .read(
+                                                  privateChatProvider.notifier)
+                                              .sendMessage(data, id);
+                                          FocusScope.of(context).unfocus();
+                                          // Implement send functionality
+                                        },
+                                      );
+                              }),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   );
-                },
-              );
+          },
+        );
       }),
     );
   }

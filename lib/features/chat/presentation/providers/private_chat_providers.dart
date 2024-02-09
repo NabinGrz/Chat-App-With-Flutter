@@ -96,9 +96,17 @@ class PrivateChatNotifier extends ChangeNotifier {
         await privateChatUseCase.sendMessage(data, userID);
     messageSend = response.success == true;
     isLoading = false;
-    if (chats != null && response.data != null) {
-      streamController.add([...chats!, response.data!]);
+    if (chats != null) {
+      if (response.data != null) {
+        _addMessage([...chats!, response.data!]);
+      }
+    } else {
+      if (response.data != null) {
+        _addMessage([response.data!]);
+      }
     }
     notifyListeners();
   }
+
+  _addMessage(List<Message> messages) => streamController.add(messages);
 }
