@@ -65,6 +65,10 @@ class ChatScreen extends ConsumerWidget {
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(0),
                                   ),
+                                  onChanged: (value) {
+                                    ref.read(showIconProvider.notifier).state =
+                                        value != "";
+                                  },
                                   style: const TextStyle(fontSize: 16),
                                 ),
                               ),
@@ -72,24 +76,28 @@ class ChatScreen extends ConsumerWidget {
                               //     ? const SizedBox()
                               //     :
                               Consumer(builder: (context, ref, child) {
-                                return ref
-                                        .read(privateChatProvider.notifier)
-                                        .isLoading
-                                    ? const CircularProgressIndicator()
-                                    : IconButton(
-                                        icon: const Icon(Icons.send),
-                                        onPressed: () async {
-                                          final data = FormData.fromMap({
-                                            'content': messageController.text
-                                          });
-                                          await ref
-                                              .read(
-                                                  privateChatProvider.notifier)
-                                              .sendMessage(data, id);
-                                          FocusScope.of(context).unfocus();
-                                          // Implement send functionality
-                                        },
-                                      );
+                                return !ref.watch(showIconProvider)
+                                    ? const SizedBox.shrink()
+                                    : ref
+                                            .read(privateChatProvider.notifier)
+                                            .isLoading
+                                        ? const CircularProgressIndicator()
+                                        : IconButton(
+                                            icon: const Icon(Icons.send),
+                                            onPressed: () async {
+                                              final data = FormData.fromMap({
+                                                'content':
+                                                    messageController.text
+                                              });
+                                              await ref
+                                                  .read(privateChatProvider
+                                                      .notifier)
+                                                  .sendMessage(data, id)
+                                                  .then((value) =>
+                                                      FocusScope.of(context)
+                                                          .unfocus());
+                                            },
+                                          );
                               }),
                             ],
                           ),

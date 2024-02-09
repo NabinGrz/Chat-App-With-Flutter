@@ -34,6 +34,7 @@ final privateChatProvider =
 
 final userIDProvider = StateProvider<String>((ref) => "");
 final myUserIDProvider = StateProvider<String>((ref) => "");
+final showIconProvider = StateProvider<bool>((ref) => false);
 
 final dataProvider = FutureProvider((ref) async {
   final preference = await SharedPreferences.getInstance();
