@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_app/features/chat_list/data/models/chat_reponse.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ChatWidgetCard extends StatelessWidget {
+import '../../../chat/presentation/providers/private_chat_providers.dart';
+
+class ChatWidgetCard extends ConsumerWidget {
   const ChatWidgetCard({
     super.key,
     required this.current,
@@ -10,9 +14,19 @@ class ChatWidgetCard extends StatelessWidget {
   final Chat current;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        ref.read(userIDProvider.notifier).state = current.id ?? "";
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatScreen(
+                "${current.isGroupChat ?? false ? current.name : current.lastParticipantName}",
+                current.id ?? "",
+              ),
+            ));
+      },
       child: Container(
         decoration: current.isNewChat == true
             ? BoxDecoration(

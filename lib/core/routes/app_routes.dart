@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/features/chat/presentation/chat_screen.dart';
 import 'package:flutter_chat_app/features/chat_list/presentation/chat_list_page.dart';
 import 'package:flutter_chat_app/features/register/presentation/register_page.dart';
 
@@ -9,6 +10,7 @@ class AppRouter {
   static const register = "/register";
   static const login = "/login";
   static const chatList = "/chatList";
+  static const chatScreen = "/chatScreen";
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case register:
@@ -17,6 +19,8 @@ class AppRouter {
         return navigate(settings, LoginPage());
       case chatList:
         return navigate(settings, const ChatListPage());
+      case chatScreen:
+        return navigate(settings, const ChatScreen("", ""));
       default:
         throw Exception(["Route Not Found!!"]);
     }

@@ -1,14 +1,14 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_chat_app/features/login/data/datasources/login_data_source.dart';
 import 'package:flutter_chat_app/features/login/data/repositories/login_repository_implentation.dart';
 import 'package:flutter_chat_app/features/login/domain/entities/user.dart';
 import 'package:flutter_chat_app/features/login/domain/usecases/login_usecase.dart';
+import 'package:flutter_chat_app/shared/providers/global_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../shared/auth_state/auth_state.dart';
 
-final loginDataSourceProvider =
-    Provider((ref) => LoginDataSourceImpl(dioClient: Dio()));
+final loginDataSourceProvider = Provider(
+    (ref) => LoginDataSourceImpl(dioClient: ref.watch(dioClientProvider)));
 
 final loginRepositoryProvider = Provider<LoginRepositoryImpl>((ref) {
   final LoginDataSource loginDataSource = ref.watch(loginDataSourceProvider);
