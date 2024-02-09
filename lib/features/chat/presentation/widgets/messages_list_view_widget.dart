@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/features/chat/presentation/widgets/message_content_widget.dart';
+import 'package:flutter_chat_app/features/chat/presentation/widgets/message_image_card.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../chat_list/data/models/message_reponse.dart';
@@ -62,37 +63,32 @@ class MessagesListViewWidget extends ConsumerWidget {
                     },
                     Flexible(
                       flex: 1,
-                      child: Container(
-                          margin: EdgeInsets.only(
-                            top: 10,
-                            bottom: index == data.length - 1 ? 10 : 0,
-                            left: isMyMessage ? 60 : 0,
-                            right: !isMyMessage ? 60 : 0,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: isMyMessage
-                              ? BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: index != data.length - 1
-                                      ? BorderRadius.circular(10)
-                                      : const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10),
-                                        ))
-                              : BoxDecoration(
-                                  color: Colors.blueGrey,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                          child: Text(
-                            "${message.content}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          )),
+                      child: ((message.attachments != null &&
+                                  message.attachments!.isNotEmpty) &&
+                              (message.content != null &&
+                                  message.content != ""))
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                MessageImageCard(
+                                    imageUrl:
+                                        "${message.attachments?.first.url}"),
+                                MessageContentCard(
+                                    index: index,
+                                    data: data,
+                                    content: "${message.content}",
+                                    isMyMessage: isMyMessage),
+                              ],
+                            )
+                          : message.attachments != null &&
+                                  message.attachments!.isNotEmpty
+                              ? MessageImageCard(
+                                  imageUrl: "${message.attachments?.first.url}")
+                              : MessageContentCard(
+                                  index: index,
+                                  data: data,
+                                  content: "${message.content}",
+                                  isMyMessage: isMyMessage),
                     ),
                   ],
                 ),

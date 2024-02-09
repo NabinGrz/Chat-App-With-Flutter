@@ -15,7 +15,8 @@ class PrivateChatRepositoryImpl extends PrivateChatDataRepository {
   }
 
   @override
-  Future<MessageSendResponse> sendMessage(FormData data, String userID) async {
-    return await privateChatDataSource.sendMessage(data, userID);
+  Future<MessageSendResponse> sendMessage(
+      FormData data, String userID, bool isImage) async {
+    return await privateChatDataSource.sendMessage(data, userID, isImage);
   }
 }

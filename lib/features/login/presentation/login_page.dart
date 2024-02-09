@@ -27,8 +27,8 @@ class LoginPage extends ConsumerWidget {
           ),
         );
       } else if (next is Success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(next.successfullAppStateResponse)));
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text(next.successfullAppStateResponse)));
         AppRouter.pushNamed(context: context, routeName: AppRouter.chatList);
       } else {}
     });

@@ -7,7 +7,8 @@ import '../models/private_chat_model.dart';
 
 abstract class PrivateChatDataSource {
   Future<PrivateChatModel> getMessages(String userID);
-  Future<MessageSendResponse> sendMessage(FormData data, String userID);
+  Future<MessageSendResponse> sendMessage(
+      FormData data, String userID, bool isImage);
 }
 
 class PrivateChatDataSourceImpl extends PrivateChatDataSource {
@@ -35,7 +36,8 @@ class PrivateChatDataSourceImpl extends PrivateChatDataSource {
   }
 
   @override
-  Future<MessageSendResponse> sendMessage(FormData data, String userID) async {
+  Future<MessageSendResponse> sendMessage(
+      FormData data, String userID, bool isImage) async {
     try {
       final sharedPreference = await SharedPreferences.getInstance();
       String? token = sharedPreference.getString('accessToken');
@@ -47,7 +49,7 @@ class PrivateChatDataSourceImpl extends PrivateChatDataSource {
 
       return MessageSendResponse.fromJson(response.data);
     } on DioException catch (e) {
-      return e.response?.data['message'];
+      return MessageSendResponse.fromJson(e.response?.data);
     }
   }
 }

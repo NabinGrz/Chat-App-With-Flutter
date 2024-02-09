@@ -12,7 +12,8 @@ class PrivateChatUseCase {
     return await privateChatDataRepository.getMessages(userID);
   }
 
-  Future<MessageSendResponse> sendMessage(FormData data, String userID) async {
-    return await privateChatDataRepository.sendMessage(data, userID);
+  Future<MessageSendResponse> sendMessage(
+      FormData data, String userID, bool isImage) async {
+    return await privateChatDataRepository.sendMessage(data, userID, isImage);
   }
 }

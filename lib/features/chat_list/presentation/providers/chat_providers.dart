@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:collection/collection.dart';
-import 'package:flutter_chat_app/features/chat/presentation/providers/private_chat_providers.dart';
 import 'package:flutter_chat_app/features/chat_list/data/datasources/chat_data_source.dart';
 import 'package:flutter_chat_app/features/chat_list/data/repositories/chat_repository_impl.dart';
 import 'package:flutter_chat_app/features/chat_list/domain/repositories/chat_repository.dart';

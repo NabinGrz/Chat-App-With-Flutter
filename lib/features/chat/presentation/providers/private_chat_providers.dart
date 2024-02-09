@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/features/chat/data/datasources/private_chat_data_source.dart';
@@ -35,6 +37,7 @@ final privateChatProvider =
 final userIDProvider = StateProvider<String>((ref) => "");
 final myUserIDProvider = StateProvider<String>((ref) => "");
 final showIconProvider = StateProvider<bool>((ref) => false);
+final selectedImagesProvider = StateProvider<File?>((ref) => null);
 
 final dataProvider = FutureProvider((ref) async {
   final preference = await SharedPreferences.getInstance();
@@ -47,7 +50,7 @@ class PrivateChatNotifier extends ChangeNotifier {
   final ChatSocketUseCase chatSocketUseCase;
   bool isLoading = false;
   bool messageSend = false;
-
+  String? errorMessage;
   PrivateChatNotifier({
     required this.userID,
     required this.privateChatUseCase,
@@ -91,11 +94,12 @@ class PrivateChatNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendMessage(FormData data, String userID) async {
+  Future<void> sendMessage(FormData data, String userID, bool isImage) async {
     isLoading = true;
     MessageSendResponse response =
-        await privateChatUseCase.sendMessage(data, userID);
+        await privateChatUseCase.sendMessage(data, userID, isImage);
     messageSend = response.success == true;
+    errorMessage = response.message;
     isLoading = false;
     if (chats != null) {
       if (response.data != null) {
@@ -106,6 +110,7 @@ class PrivateChatNotifier extends ChangeNotifier {
         _addMessage([response.data!]);
       }
     }
+
     notifyListeners();
   }
 
