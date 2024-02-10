@@ -12,7 +12,7 @@ class MessageImageCard extends StatelessWidget {
     return Container(
       height: 160,
       margin: EdgeInsets.only(
-        top: 10,
+        // top: 10,
         left: isMyMessage ? 60 : 0,
         right: !isMyMessage ? 60 : 0,
       ),

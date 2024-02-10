@@ -3,6 +3,7 @@ import 'package:flutter_chat_app/features/chat_list/presentation/providers/user_
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../core/constants/app_text_style.dart';
 import '../../data/models/user_model.dart';
 
 class UserTextField extends ConsumerWidget {
@@ -33,9 +34,10 @@ class UserTextField extends ConsumerWidget {
           controller: userController,
           focusNode: focusNode,
           autofocus: false,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: "Select a user to chat....",
-            border: OutlineInputBorder(),
+            hintStyle: AppTextStyle.extraLight(fontSize: 14),
+            border: const OutlineInputBorder(),
           ),
           onChanged: (value) {
             ref.read(userNameProvider.notifier).state = value;

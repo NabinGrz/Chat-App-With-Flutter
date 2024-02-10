@@ -69,7 +69,8 @@ class ChatListPage extends ConsumerWidget {
                       .stream,
                   builder: (context, snapshot) {
                     return (snapshot.data == null ||
-                            (snapshot.data?.isEmpty ?? true))
+                                (snapshot.data?.isEmpty ?? true)) &&
+                            snapshot.connectionState != ConnectionState.waiting
                         ? Center(
                             child: Text(
                             AppStrings.noChatsAvailable,

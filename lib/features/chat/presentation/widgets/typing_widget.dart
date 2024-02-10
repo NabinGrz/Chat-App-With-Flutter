@@ -2,19 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/string_constants.dart';
+import '../../../chat_list/data/models/chat_list_response.dart';
 import '../../../chat_list/data/models/message_reponse.dart';
 import 'typing_indicator.dart';
+import 'package:collection/collection.dart';
 
 class TypingWidget extends StatelessWidget {
   const TypingWidget({
     super.key,
     required this.data,
+    this.id,
   });
 
   final List<Message> data;
+  final String? id;
 
   @override
   Widget build(BuildContext context) {
+    Message? message = data.firstWhereOrNull((element) => element.id == id);
+    bool hasNoMessage = message == null;
+    String? url = message?.sender?.avatar?.url;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -26,9 +33,7 @@ class TypingWidget extends StatelessWidget {
               height: 24,
               width: 24,
               fit: BoxFit.cover,
-              imageUrl: data.first.sender?.avatar?.url == null
-                  ? AppStrings.imagePlaceHolder
-                  : data.first.sender?.avatar?.url ?? "",
+              imageUrl: hasNoMessage ? AppStrings.imagePlaceHolder : url ?? "",
               placeholder: (context, url) =>
                   Image.asset("assets/images/image_error.jpeg"),
               imageBuilder: (context, provider) {

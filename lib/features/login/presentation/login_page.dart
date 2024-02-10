@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/app_colors.dart';
+import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/core/routes/app_routes.dart';
 import 'package:flutter_chat_app/features/login/domain/entities/user.dart';
 import 'package:flutter_chat_app/features/login/provider/login_providers.dart';
@@ -9,6 +11,8 @@ import '../../../shared/auth_state/auth_state.dart';
 class LoginPage extends ConsumerWidget {
   LoginPage({super.key});
 
+  // final usernameController = TextEditingController();
+  // final passwordController = TextEditingController();
   final usernameController = TextEditingController(text: "nabin");
   final passwordController = TextEditingController(text: "nabin");
   @override
@@ -33,9 +37,13 @@ class LoginPage extends ConsumerWidget {
       } else {}
     });
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
-          "Login",
+        // backgroundColor: AppColors.primary,
+        backgroundColor: Colors.white, elevation: 0,
+        title: Text(
+          "Simple Chat Application",
+          style: AppTextStyle.regular(color: Colors.black),
         ),
       ),
       body: state.maybeMap(
@@ -48,28 +56,51 @@ class LoginPage extends ConsumerWidget {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Text(
+                  "Login",
+                  style: AppTextStyle.semiBold(fontSize: 35),
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
                 TextField(
                   controller: usernameController,
-                  decoration: const InputDecoration(
-                    hintText: "Username",
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    hintText: "Username....",
+                    hintStyle: AppTextStyle.extraLight(),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.primary),
+                    ),
                   ),
+                  style: AppTextStyle.regular(),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 TextField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  style: AppTextStyle.regular(),
+                  decoration: InputDecoration(
                     hintText: "Password",
-                    border: OutlineInputBorder(),
+                    hintStyle: AppTextStyle.extraLight(),
+                    border: const OutlineInputBorder(),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.primary),
+                    ),
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      minimumSize: const Size(200, 40),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30))),
                   onPressed: () async {
                     final notifier = ref.read(loginProvider.notifier);
                     await notifier.loginUser(
@@ -79,17 +110,32 @@ class LoginPage extends ConsumerWidget {
                       ),
                     );
                   },
-                  child: const Text("Login"),
+                  child: Text(
+                    "Login",
+                    style: AppTextStyle.semiBold(),
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    AppRouter.pushNamed(
-                        context: context, routeName: AppRouter.register);
-                  },
-                  child: const Text("Register"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account?",
+                      style: AppTextStyle.regular(),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        AppRouter.pushNamed(
+                            context: context, routeName: AppRouter.register);
+                      },
+                      child: Text(
+                        "Register",
+                        style: AppTextStyle.semiBold(),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),

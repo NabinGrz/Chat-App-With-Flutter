@@ -8,7 +8,7 @@ import '../../data/models/chat_list_response.dart';
 Widget stackedImage(List<Avatar?>? imageUrlList, double size, String myID) {
   Avatar? avatar =
       imageUrlList?.firstWhereOrNull((element) => element?.id == myID);
-  bool hasAvatar = avatar == null;
+  bool hasNoAvatar = avatar == null;
   String? url = avatar?.url;
   return Container(
     height: size + 8,
@@ -30,9 +30,12 @@ Widget stackedImage(List<Avatar?>? imageUrlList, double size, String myID) {
                           width: 40,
                           fit: BoxFit.cover,
                           imageUrl:
-                              hasAvatar ? AppStrings.imagePlaceHolder : url!,
-                          placeholder: (context, url) =>
-                              Image.asset("assets/images/image_error.jpeg"),
+                              hasNoAvatar ? AppStrings.imagePlaceHolder : url!,
+                          placeholder: (context, url) => CircleAvatar(
+                            radius: size / 2,
+                            backgroundImage: const AssetImage(
+                                "assets/images/image_error.jpeg"),
+                          ),
                           imageBuilder: (context, provider) {
                             return Container(
                               height: size,
@@ -90,8 +93,10 @@ class ProfileCard extends StatelessWidget {
           width: 40,
           fit: BoxFit.cover,
           imageUrl: imageUrl == null ? AppStrings.imagePlaceHolder : imageUrl!,
-          placeholder: (context, url) =>
-              Image.asset("assets/images/image_error.jpeg"),
+          placeholder: (context, url) => const CircleAvatar(
+            radius: 20,
+            backgroundImage: AssetImage("assets/images/image_error.jpeg"),
+          ),
           imageBuilder: (context, provider) {
             return Container(
               height: 40,

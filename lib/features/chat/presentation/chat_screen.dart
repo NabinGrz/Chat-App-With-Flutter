@@ -111,7 +111,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                               ),
                             )
                           : MessagesListViewWidget(
-                              data: snapshot.data!.groupBy(
+                              isGroupChat: current?.isGroupChat ?? false,
+                              data: snapshot.data!,
+                              groupedMessages: snapshot.data!.groupBy(
                                 (msg) => msg.createdAt.format('yyyy-MM-dd'),
                               ),
                               id: id),

@@ -10,14 +10,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../core/constants/string_constants.dart';
 import '../../../chat_list/data/models/message_reponse.dart';
 import '../providers/private_chat_providers.dart';
+import 'typing_widget.dart';
 
 class MessagesListViewWidget extends ConsumerWidget {
-  final Map<String, List<Message>> data;
+  final Map<String, List<Message>> groupedMessages;
   final String id;
+  final bool isGroupChat;
+  final List<Message> data;
   const MessagesListViewWidget({
     super.key,
-    required this.data,
+    required this.groupedMessages,
     required this.id,
+    required this.isGroupChat,
+    required this.data,
   });
 
   @override
@@ -30,9 +35,11 @@ class MessagesListViewWidget extends ConsumerWidget {
         reverse: true,
         controller: controller,
         children: [
-          // if (ref.read(privateChatProvider.notifier).isTyping) ...{
-          //   TypingWidget(data: data)
-          // },
+          if (ref.read(privateChatProvider.notifier).isTyping) ...{
+            TypingWidget(
+                data: data,
+                id: ref.read(privateChatProvider.notifier).typingUser)
+          },
           const SizedBox(
             height: 10,
           ),
@@ -44,10 +51,10 @@ class MessagesListViewWidget extends ConsumerWidget {
                 height: 12,
               );
             },
-            itemCount: data.length,
+            itemCount: groupedMessages.length,
             itemBuilder: (context, index) {
-              final group = data.keys.elementAt(index);
-              final list = data[group];
+              final group = groupedMessages.keys.elementAt(index);
+              final list = groupedMessages[group];
               return Column(
                 children: [
                   Center(
@@ -80,7 +87,9 @@ class MessagesListViewWidget extends ConsumerWidget {
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: isGroupChat
+                                ? CrossAxisAlignment.start
+                                : CrossAxisAlignment.end,
                             mainAxisAlignment: isMyMessage
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
@@ -127,8 +136,16 @@ class MessagesListViewWidget extends ConsumerWidget {
                                             message.content != ""))
                                     ? Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.end,
+                                            CrossAxisAlignment.start,
                                         children: [
+                                          if (isGroupChat) ...{
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                                "${message.sender?.username?.capitialize}",
+                                                style: AppTextStyle.medium())
+                                          },
                                           MessageImageCard(
                                             imageUrl:
                                                 "${message.attachments?.first.url}",
@@ -144,19 +161,39 @@ class MessagesListViewWidget extends ConsumerWidget {
                                               isMyMessage: isMyMessage),
                                         ],
                                       )
-                                    : message.attachments != null &&
-                                            message.attachments!.isNotEmpty
-                                        ? MessageImageCard(
-                                            isMyMessage: isMyMessage,
-                                            imageUrl:
-                                                "${message.attachments?.first.url}")
-                                        : MessageContentCard(
-                                            myID: ref.watch(myUserIDProvider),
-                                            senderID: message.sender?.id ?? "",
-                                            index: index,
-                                            data: list,
-                                            content: "${message.content}",
-                                            isMyMessage: isMyMessage),
+                                    : Column(
+                                        crossAxisAlignment: isMyMessage
+                                            ? CrossAxisAlignment.end
+                                            : CrossAxisAlignment.start,
+                                        children: [
+                                          if (isGroupChat) ...{
+                                            const SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                                isMyMessage
+                                                    ? "You"
+                                                    : "${message.sender?.username?.capitialize}",
+                                                style: AppTextStyle.medium())
+                                          },
+                                          message.attachments != null &&
+                                                  message
+                                                      .attachments!.isNotEmpty
+                                              ? MessageImageCard(
+                                                  isMyMessage: isMyMessage,
+                                                  imageUrl:
+                                                      "${message.attachments?.first.url}")
+                                              : MessageContentCard(
+                                                  myID: ref
+                                                      .watch(myUserIDProvider),
+                                                  senderID:
+                                                      message.sender?.id ?? "",
+                                                  index: index,
+                                                  data: list,
+                                                  content: "${message.content}",
+                                                  isMyMessage: isMyMessage),
+                                        ],
+                                      ),
                               ),
                             ],
                           ),

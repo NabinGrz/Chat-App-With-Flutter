@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/app_colors.dart';
+import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/features/chat_list/domain/entities/group_data_model.dart';
 import 'package:flutter_chat_app/features/chat_list/presentation/providers/user_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -73,11 +75,11 @@ class CreateChatDialog extends ConsumerWidget {
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text(
+                        Text(
                           "Is it a group chat?",
-                          style: TextStyle(
+                          style: AppTextStyle.light(
                             fontSize: 12,
-                            color: Colors.blueGrey,
+                            color: Colors.grey,
                           ),
                         )
                       ],
@@ -141,7 +143,12 @@ class CreateChatDialog extends ConsumerWidget {
           ref.read(userNameProvider.notifier).state = null;
           userController.clear();
         },
-        child: const Text("Close"),
+        child: const Text(
+          "Close",
+          style: TextStyle(
+            color: AppColors.primary,
+          ),
+        ),
       ),
       TextButton(
         onPressed: () async {
@@ -165,7 +172,12 @@ class CreateChatDialog extends ConsumerWidget {
             }
           }
         },
-        child: const Text("Create"),
+        child: const Text(
+          "Create",
+          style: TextStyle(
+            color: AppColors.primary,
+          ),
+        ),
       ),
     ];
   }
