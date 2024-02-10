@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/string_constants.dart';
 
 Widget stackedImage(List<String?>? imageUrlList) {
   return Container(
@@ -11,19 +13,28 @@ Widget stackedImage(List<String?>? imageUrlList) {
               if (imageUrlList.length == 2) ...{
                 Center(
                     child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundImage: imageUrlList.first == null
-                        ? const NetworkImage(
-                            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png")
-                        : NetworkImage(imageUrlList.first!),
-                  ),
-                ))
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: imageUrlList.first == null
+                              ? AppStrings.imagePlaceHolder
+                              : imageUrlList.first!,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          imageBuilder: (context, provider) {
+                            return Container(
+                              height: 52,
+                              width: 52,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(image: provider),
+                              ),
+                            );
+                          },
+                        )))
               },
               if (imageUrlList.length > 2) ...{
                 Align(
@@ -57,18 +68,24 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: CircleAvatar(
-        radius: radius,
-        backgroundImage: imageUrl == null
-            ? const NetworkImage(
-                "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png")
-            : NetworkImage(imageUrl!),
-      ),
-    );
+        padding: const EdgeInsets.all(2),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl == null ? AppStrings.imagePlaceHolder : imageUrl!,
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          imageBuilder: (context, provider) {
+            return Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(image: provider),
+              ),
+            );
+          },
+        ));
   }
 }

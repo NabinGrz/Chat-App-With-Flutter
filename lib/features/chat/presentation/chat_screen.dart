@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/app_colors.dart';
+import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/shared/providers/global_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -55,8 +57,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       }
     });
     return Scaffold(
+      backgroundColor: const Color(0xfff7f6f8),
       appBar: AppBar(
-        title: Text(username),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ),
+        centerTitle: false,
+        title: Row(
+          children: [
+            Text(
+              username,
+              style: AppTextStyle.semiBold(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Consumer(builder: (context, ref, child) {
         return StreamBuilder(
@@ -66,184 +84,208 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 ? const Center(
                     child: CircularProgressIndicator.adaptive(),
                   )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        !snapshot.hasData && snapshot.data == null
-                            ? const Expanded(
-                                child: Center(
-                                  child: Text("No messages yet!!"),
-                                ),
-                              )
-                            : MessagesListViewWidget(
-                                data: snapshot.data!, id: id),
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 25),
-                          decoration: img == null
-                              ? null
-                              : BoxDecoration(
-                                  color: Colors.grey[350],
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              const SizedBox(
-                                height: 10,
+                : Column(
+                    children: [
+                      !snapshot.hasData && snapshot.data == null
+                          ? const Expanded(
+                              child: Center(
+                                child: Text("No messages yet!!"),
                               ),
-                              if (img != null) ...{
-                                SizedBox(
-                                    height: 100,
-                                    width: 120,
-                                    child: Stack(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 6),
-                                            clipBehavior: Clip.hardEdge,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: Image.file(
-                                              img,
-                                              fit: BoxFit.cover,
-                                            ),
+                            )
+                          : MessagesListViewWidget(
+                              data: snapshot.data!, id: id),
+                      Container(
+                        // margin: const EdgeInsets.only(
+                        //     // bottom: 25,
+                        //     ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        decoration: img == null
+                            ? const BoxDecoration(
+                                color: Colors.white,
+                              )
+                            : BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (img != null) ...{
+                              SizedBox(
+                                  height: 100,
+                                  width: 120,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 6),
+                                          clipBehavior: Clip.hardEdge,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Image.file(
+                                            img,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: InkWell(
-                                            onTap: () {
-                                              ref
-                                                  .read(selectedImagesProvider
-                                                      .notifier)
-                                                  .state = null;
-                                            },
-                                            child: Container(
-                                                decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    shape: BoxShape.circle),
-                                                child: const Icon(
-                                                  Icons.clear,
-                                                  color: Colors.blueGrey,
-                                                  size: 18,
-                                                )),
-                                          ),
-                                        )
-                                      ],
-                                    ))
-                              },
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                // margin: const EdgeInsets.only(bottom: 25),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(
-                                          Icons.add_a_photo_outlined),
-                                      onPressed: () async {
-                                        final imageUseCaseNotifier =
-                                            ref.read(imageUseCaseProvider);
-                                        await imageUseCaseNotifier
-                                            .getImageFromGallery((file) => ref
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: InkWell(
+                                          onTap: () {
+                                            ref
                                                 .read(selectedImagesProvider
                                                     .notifier)
-                                                .update((state) => file));
-                                      },
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        controller: messageController,
-                                        decoration: const InputDecoration(
-                                          hintText: "Type a message",
-                                          border: InputBorder.none,
-                                          contentPadding: EdgeInsets.all(0),
+                                                .state = null;
+                                          },
+                                          child: Container(
+                                              decoration: const BoxDecoration(
+                                                  color: Colors.white,
+                                                  shape: BoxShape.circle),
+                                              child: const Icon(
+                                                Icons.clear,
+                                                color: Colors.blueGrey,
+                                                size: 18,
+                                              )),
                                         ),
-                                        onChanged: (value) {
-                                          ref
-                                              .read(showIconProvider.notifier)
-                                              .state = value != "";
-                                          resetTimer();
-
-                                          ref
-                                              .read(typingProvider.notifier)
-                                              .state = true;
-                                          ref
-                                              .read(
-                                                  privateChatProvider.notifier)
-                                              .startTyping(id);
-                                        },
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
+                                      )
+                                    ],
+                                  ))
+                            },
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    // margin: const EdgeInsets.only(bottom: 25),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
-                                    Consumer(builder: (context, ref, child) {
-                                      return !showIcon
-                                          ? const SizedBox.shrink()
-                                          : ref
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final imageUseCaseNotifier =
+                                                ref.read(imageUseCaseProvider);
+                                            await imageUseCaseNotifier
+                                                .getImageFromGallery((file) => ref
+                                                    .read(selectedImagesProvider
+                                                        .notifier)
+                                                    .update((state) => file));
+                                          },
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                                color: AppColors.primary,
+                                                shape: BoxShape.circle),
+                                            padding: const EdgeInsets.all(8),
+                                            child: const Icon(
+                                              Icons.photo_camera,
+                                              color: Colors.white,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: TextField(
+                                            controller: messageController,
+                                            decoration: InputDecoration(
+                                              hintText: "Type a message",
+                                              hintStyle:
+                                                  AppTextStyle.extraLight(),
+                                              border: InputBorder.none,
+                                              contentPadding:
+                                                  const EdgeInsets.all(0),
+                                            ),
+                                            onChanged: (value) {
+                                              ref
+                                                  .read(
+                                                      showIconProvider.notifier)
+                                                  .state = value != "";
+                                              resetTimer();
+
+                                              ref
+                                                  .read(typingProvider.notifier)
+                                                  .state = true;
+                                              ref
                                                   .read(privateChatProvider
                                                       .notifier)
-                                                  .isLoading
-                                              ? const CircularProgressIndicator()
-                                              : IconButton(
-                                                  icon: const Icon(Icons.send),
-                                                  onPressed: () async {
-                                                    final imageData = img ==
-                                                            null
-                                                        ? null
-                                                        : await MultipartFile
-                                                            .fromFile(img.path);
-                                                    final data = {
-                                                      if (imageData != null)
-                                                        'attachments':
-                                                            imageData,
-                                                      if (messageController
-                                                              .text !=
-                                                          "")
-                                                        'content':
-                                                            messageController
-                                                                .text
-                                                    };
-                                                    final formData =
-                                                        FormData.fromMap(data);
-                                                    await ref
-                                                        .read(
-                                                            privateChatProvider
-                                                                .notifier)
-                                                        .sendMessage(
-                                                            formData, id, false)
-                                                        .then((value) =>
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .unfocus());
-                                                    ref
-                                                        .read(
-                                                            selectedImagesProvider
-                                                                .notifier)
-                                                        .state = null;
-                                                  },
-                                                );
-                                    }),
-                                  ],
+                                                  .startTyping(id);
+                                            },
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                                Consumer(builder: (context, ref, child) {
+                                  return !showIcon
+                                      ? const SizedBox.shrink()
+                                      : ref
+                                              .read(
+                                                  privateChatProvider.notifier)
+                                              .isLoading
+                                          ? const CircularProgressIndicator()
+                                          : IconButton(
+                                              icon: const Icon(
+                                                Icons.send,
+                                                color: AppColors.primary,
+                                              ),
+                                              onPressed: () async {
+                                                final imageData = img == null
+                                                    ? null
+                                                    : await MultipartFile
+                                                        .fromFile(img.path);
+                                                final data = {
+                                                  if (imageData != null)
+                                                    'attachments': imageData,
+                                                  if (messageController.text !=
+                                                      "")
+                                                    'content':
+                                                        messageController.text
+                                                };
+                                                final formData =
+                                                    FormData.fromMap(data);
+                                                await ref
+                                                    .read(privateChatProvider
+                                                        .notifier)
+                                                    .sendMessage(
+                                                        formData, id, false)
+                                                    .then((value) =>
+                                                        FocusScope.of(context)
+                                                            .unfocus());
+                                                ref
+                                                    .read(selectedImagesProvider
+                                                        .notifier)
+                                                    .state = null;
+                                              },
+                                            );
+                                }),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   );
           },
         );

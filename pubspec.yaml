@@ -42,7 +42,6 @@ dependencies:
   socket_io_client: ^2.0.3+1
   rxdart: ^0.27.7
   intl: ^0.19.0
-  google_fonts: ^6.1.0
   flutter_typeahead: ^5.1.0
   image_picker: ^1.0.7
   permission_handler: ^11.2.1
@@ -80,6 +79,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
+    - assets/fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -93,16 +93,50 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: Poppins
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  #       - asset: fonts/Poppins-Regular.ttf
+  #       - asset: fonts/Poppins-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+  fonts:
+    - family: Poppins-extra-light
+      fonts:
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
+          weight: 100
+    - family: Poppins-thin
+      fonts:
+        - asset: assets/fonts/Poppins-Thin.ttf
+          weight: 200
+    - family: Poppins-light
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+    - family: Poppins-regular
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+    - family: Poppins-medium
+      fonts:
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+    - family: Poppins-semi-bold
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+    - family: Poppins-bold
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Poppins-extra-bold
+      fonts:
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

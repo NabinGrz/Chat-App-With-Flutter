@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_content_widget.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_image_card.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../core/constants/string_constants.dart';
 import '../../../chat_list/data/models/message_reponse.dart';
 import '../providers/private_chat_providers.dart';
 
@@ -23,6 +25,7 @@ class MessagesListViewWidget extends ConsumerWidget {
     return Expanded(
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         reverse: true,
         controller: controller,
         children: [
@@ -31,18 +34,27 @@ class MessagesListViewWidget extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.orange,
-                  ),
-                  child: CircleAvatar(
-                    radius: 12,
-                    backgroundImage: data.first.sender?.avatar?.url == null
-                        ? const NetworkImage(
-                            "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png")
-                        : NetworkImage(data.first.sender?.avatar?.url ?? ""),
-                  ),
-                ),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.orange,
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: data.first.sender?.avatar?.url == null
+                          ? AppStrings.imagePlaceHolder
+                          : data.first.sender?.avatar?.url ?? "",
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      imageBuilder: (context, provider) {
+                        return Container(
+                          height: 24,
+                          width: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(image: provider),
+                          ),
+                        );
+                      },
+                    )),
                 // const SizedBox(width: 6),
                 const Expanded(
                   child: TypingIndicator(
@@ -62,7 +74,12 @@ class MessagesListViewWidget extends ConsumerWidget {
           const SizedBox(
             height: 10,
           ),
-          ListView.builder(
+          ListView.separated(
+            separatorBuilder: (context, index) {
+              return const SizedBox(
+                height: 12,
+              );
+            },
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: data.length,
@@ -86,12 +103,22 @@ class MessagesListViewWidget extends ConsumerWidget {
                           shape: BoxShape.circle,
                           color: Colors.orange,
                         ),
-                        child: CircleAvatar(
-                          radius: 12,
-                          backgroundImage: message.sender?.avatar?.url == null
-                              ? const NetworkImage(
-                                  "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png")
-                              : NetworkImage(message.sender?.avatar?.url ?? ""),
+                        child: CachedNetworkImage(
+                          imageUrl: message.sender?.avatar?.url == null
+                              ? AppStrings.imagePlaceHolder
+                              : message.sender?.avatar?.url ?? "",
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          imageBuilder: (context, provider) {
+                            return Container(
+                              height: 24,
+                              width: 24,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(image: provider),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -105,7 +132,7 @@ class MessagesListViewWidget extends ConsumerWidget {
                               (message.content != null &&
                                   message.content != ""))
                           ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 MessageImageCard(
                                   imageUrl: "${message.attachments?.first.url}",
