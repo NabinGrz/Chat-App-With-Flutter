@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import 'package:flutter_chat_app/features/chat_list/data/models/message_reponse.dart';
 
+import '../../../chat_list/data/models/chat_list_response.dart';
+
 MessageSendResponse messageSendResponseFromJson(String str) =>
     MessageSendResponse.fromJson(json.decode(str));
 
@@ -66,29 +68,5 @@ class Sender {
         "avatar": avatar?.toJson(),
         "username": username,
         "email": email,
-      };
-}
-
-class Avatar {
-  String? url;
-  String? localPath;
-  String? id;
-
-  Avatar({
-    this.url,
-    this.localPath,
-    this.id,
-  });
-
-  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
-        url: json["url"],
-        localPath: json["localPath"],
-        id: json["_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "url": url,
-        "localPath": localPath,
-        "_id": id,
       };
 }

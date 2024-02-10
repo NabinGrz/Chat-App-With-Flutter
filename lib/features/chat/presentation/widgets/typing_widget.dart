@@ -21,20 +21,26 @@ class TypingWidget extends StatelessWidget {
         Container(
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.orange,
             ),
             child: CachedNetworkImage(
+              height: 24,
+              width: 24,
+              fit: BoxFit.cover,
               imageUrl: data.first.sender?.avatar?.url == null
                   ? AppStrings.imagePlaceHolder
                   : data.first.sender?.avatar?.url ?? "",
-              placeholder: (context, url) => const CircularProgressIndicator(),
+              placeholder: (context, url) =>
+                  Image.asset("assets/images/image_error.jpeg"),
               imageBuilder: (context, provider) {
                 return Container(
                   height: 24,
                   width: 24,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    image: DecorationImage(image: provider),
+                    image: DecorationImage(
+                      image: provider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 );
               },

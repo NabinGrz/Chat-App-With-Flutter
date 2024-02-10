@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_app/core/constants/socket_events.dart';
 import 'package:flutter_chat_app/features/chat/data/datasources/private_chat_data_source.dart';
 import 'package:flutter_chat_app/features/chat/data/models/private_chat_model.dart';
 import 'package:flutter_chat_app/features/chat/data/repositories/private_chat_repositories_impl.dart';
@@ -38,7 +37,7 @@ final privateChatProvider =
 
 final userIDProvider = StateProvider<String>((ref) => "");
 final myUserIDProvider = StateProvider<String>((ref) => "");
-final showIconProvider = StateProvider<bool>((ref) => false);
+// final showIconProvider = StateProvider<bool>((ref) => false);
 final selectedImagesProvider = StateProvider<File?>((ref) => null);
 final typingProvider = StateProvider<bool>((ref) => false);
 
@@ -46,6 +45,16 @@ final dataProvider = FutureProvider((ref) async {
   final preference = await SharedPreferences.getInstance();
   ref.read(myUserIDProvider.notifier).state = preference.getString('id') ?? "";
 });
+final showIconProvider =
+    StateNotifierProvider<SendIconNotifier, bool>((ref) => SendIconNotifier());
+
+class SendIconNotifier extends StateNotifier<bool> {
+  SendIconNotifier() : super(false);
+
+  bool get show => state;
+
+  toggle(String value) => state = value != "";
+}
 
 class PrivateChatNotifier extends ChangeNotifier {
   final PrivateChatUseCase privateChatUseCase;
@@ -53,6 +62,7 @@ class PrivateChatNotifier extends ChangeNotifier {
   final ChatSocketUseCase chatSocketUseCase;
   bool isLoading = false;
   bool messageSend = false;
+  bool enableButton = false;
   bool isTyping = false;
   String? typingUser;
   String? errorMessage;
@@ -102,6 +112,16 @@ class PrivateChatNotifier extends ChangeNotifier {
         },
       );
     });
+  }
+
+  void enableSendButton() {
+    enableButton = true;
+    notifyListeners();
+  }
+
+  void disableSendButton() {
+    enableButton = false;
+    notifyListeners();
   }
 
   Future<void> getMessages(String userID) async {

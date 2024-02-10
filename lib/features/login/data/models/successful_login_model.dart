@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import '../../../chat_list/data/models/chat_list_response.dart';
+
 SuccessfullLoginResponse successfullLoginResponseFromJson(String str) =>
     SuccessfullLoginResponse.fromJson(json.decode(str));
 
@@ -112,29 +114,5 @@ class User {
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
         "__v": v,
-      };
-}
-
-class Avatar {
-  String url;
-  String localPath;
-  String id;
-
-  Avatar({
-    required this.url,
-    required this.localPath,
-    required this.id,
-  });
-
-  factory Avatar.fromJson(Map<String, dynamic> json) => Avatar(
-        url: json["url"],
-        localPath: json["localPath"],
-        id: json["_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "url": url,
-        "localPath": localPath,
-        "_id": id,
       };
 }

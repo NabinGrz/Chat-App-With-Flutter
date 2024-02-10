@@ -20,6 +20,7 @@ class MessageImageCard extends StatelessWidget {
       child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: CachedNetworkImage(
+            fit: BoxFit.cover,
             imageUrl: imageUrl,
             placeholder: (context, url) {
               return Image.asset("assets/images/image_error.jpeg");

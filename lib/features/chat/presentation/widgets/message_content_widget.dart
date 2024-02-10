@@ -50,26 +50,15 @@ class MessageContentCard extends StatelessWidget {
           : BoxDecoration(
               color: const Color(0xffe9e8e8),
               borderRadius: beforeMe != me && afterMe != me
-                  ? BorderRadius.circular(10)
+                  ? BorderRadius.circular(12)
                   : isLastMessage
-                      ? const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                          bottomRight: Radius.circular(8),
-                          bottomLeft: Radius.circular(20),
-                        )
+                      ? borderRadius(0, 14, 14, 14)
                       : isFirstMessage
-                          ? const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                              bottomLeft: Radius.circular(8),
-                            )
-                          : BorderRadius.circular(10),
+                          ? borderRadius(14, 14, 0, 14)
+                          : BorderRadius.circular(8),
             ),
       child: Text(
         content,
-        // "$content:$isLastMessage:$isFirstMessage: ${data.length >= 2}",
         style: AppTextStyle.light(
           color: isMyMessage ? Colors.white : const Color(0xff1f1f1f),
           fontSize: 16,
@@ -77,4 +66,17 @@ class MessageContentCard extends StatelessWidget {
       ),
     );
   }
+
+  BorderRadius borderRadius(
+    double topLeft,
+    double topRight,
+    double bottomLeft,
+    double bottomRight,
+  ) =>
+      BorderRadius.only(
+        topLeft: Radius.circular(topLeft),
+        topRight: Radius.circular(topRight),
+        bottomLeft: Radius.circular(bottomLeft),
+        bottomRight: Radius.circular(bottomRight),
+      );
 }

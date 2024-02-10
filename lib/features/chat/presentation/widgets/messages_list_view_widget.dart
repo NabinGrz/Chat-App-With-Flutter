@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_content_widget.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_image_card.dart';
-import 'package:flutter_chat_app/features/chat/presentation/widgets/typing_indicator.dart';
 import 'package:flutter_chat_app/shared/extensions/date_time_extensions.dart';
-import 'package:flutter_chat_app/shared/extensions/list_extensions.dart';
 import 'package:flutter_chat_app/shared/extensions/string_extensions.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../core/constants/string_constants.dart';
 import '../../../chat_list/data/models/message_reponse.dart';
 import '../providers/private_chat_providers.dart';
-import 'typing_widget.dart';
 
 class MessagesListViewWidget extends ConsumerWidget {
   final Map<String, List<Message>> data;
@@ -92,23 +89,27 @@ class MessagesListViewWidget extends ConsumerWidget {
                                 Container(
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.orange,
                                   ),
                                   child: CachedNetworkImage(
+                                    height: 24,
+                                    width: 24,
+                                    fit: BoxFit.cover,
                                     imageUrl:
                                         message.sender?.avatar?.url == null
                                             ? AppStrings.imagePlaceHolder
                                             : message.sender?.avatar?.url ?? "",
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
+                                    placeholder: (context, url) => Image.asset(
+                                        "assets/images/image_error.jpeg"),
                                     imageBuilder: (context, provider) {
                                       return Container(
                                         height: 24,
                                         width: 24,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          image:
-                                              DecorationImage(image: provider),
+                                          image: DecorationImage(
+                                            image: provider,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       );
                                     },

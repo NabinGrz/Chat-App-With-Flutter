@@ -46,8 +46,10 @@ class ChatWidgetCard extends ConsumerWidget {
               Row(
                 children: [
                   stackedImage(
-                      current.participants?.map((e) => e.avatar?.url).toList(),
-                      52),
+                    current.participants?.map((e) => e.avatar).toList(),
+                    52,
+                    ref.watch(myUserIDProvider),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

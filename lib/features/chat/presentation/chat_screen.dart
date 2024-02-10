@@ -10,7 +10,6 @@ import 'package:flutter_chat_app/shared/extensions/date_time_extensions.dart';
 import 'package:flutter_chat_app/shared/extensions/list_extensions.dart';
 import 'package:flutter_chat_app/shared/providers/global_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 
 import '../../chat_list/presentation/widgets/stacked_image.dart';
 import 'providers/private_chat_providers.dart';
@@ -53,7 +52,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final state = ref.watch(privateChatProvider);
     final messageController = TextEditingController();
     final img = ref.watch(selectedImagesProvider);
+    final myID = ref.watch(myUserIDProvider);
     bool showIcon = ref.watch(showIconProvider) || img != null;
+
     ref.read(dataProvider);
     ref.listen(privateChatProvider, (previous, next) {
       if (next.messageSend == false && next.errorMessage != null) {
@@ -77,7 +78,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: Row(
           children: [
             stackedImage(
-                current?.participants?.map((e) => e.avatar?.url).toList(), 48),
+                current?.participants?.map((e) => e.avatar).toList(), 48, myID),
             Text(
               username,
               style: AppTextStyle.semiBold(
@@ -232,12 +233,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                                   const EdgeInsets.all(0),
                                             ),
                                             onChanged: (value) {
-                                              ref
-                                                  .read(
-                                                      showIconProvider.notifier)
-                                                  .state = value != "";
                                               resetTimer();
-
                                               ref
                                                   .read(typingProvider.notifier)
                                                   .state = true;
@@ -245,6 +241,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                                   .read(privateChatProvider
                                                       .notifier)
                                                   .startTyping(id);
+                                              ref
+                                                  .read(
+                                                      showIconProvider.notifier)
+                                                  .toggle(value);
                                             },
                                             style:
                                                 const TextStyle(fontSize: 16),
