@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/features/chat_list/presentation/providers/user_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -23,6 +24,7 @@ class ParticipantsWidget extends StatelessWidget {
               Chip(
                 label: Text(
                   "${user?.username}",
+                  style: AppTextStyle.regular(fontSize: 12),
                 ),
                 deleteIcon: const Icon(Icons.clear),
                 onDeleted: () {

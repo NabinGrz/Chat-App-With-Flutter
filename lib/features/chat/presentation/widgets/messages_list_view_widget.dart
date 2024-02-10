@@ -135,8 +135,9 @@ class MessagesListViewWidget extends ConsumerWidget {
                                         (message.content != null &&
                                             message.content != ""))
                                     ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: isMyMessage
+                                            ? CrossAxisAlignment.end
+                                            : CrossAxisAlignment.start,
                                         children: [
                                           if (isGroupChat) ...{
                                             const SizedBox(

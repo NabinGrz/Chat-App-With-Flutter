@@ -89,9 +89,11 @@ class CreateChatDialog extends ConsumerWidget {
                     ),
                     if (ref.watch(isGroupChatProvider)) ...{
                       TextField(
-                        decoration: const InputDecoration(
+                        style: AppTextStyle.regular(),
+                        decoration: InputDecoration(
                           hintText: "Enter a group name...",
-                          border: OutlineInputBorder(),
+                          hintStyle: AppTextStyle.extraLight(fontSize: 14),
+                          border: const OutlineInputBorder(),
                         ),
                         onChanged: (value) {
                           ref.read(groupNameProvider.notifier).state = value;

@@ -33,6 +33,7 @@ class UserTextField extends ConsumerWidget {
         return TextField(
           controller: userController,
           focusNode: focusNode,
+          style: AppTextStyle.regular(),
           autofocus: false,
           decoration: InputDecoration(
             hintText: "Select a user to chat....",
@@ -46,7 +47,10 @@ class UserTextField extends ConsumerWidget {
       },
       itemBuilder: (context, name) {
         return ListTile(
-          title: Text(name?.username ?? ""),
+          title: Text(
+            name?.username ?? "",
+            style: AppTextStyle.regular(fontSize: 12),
+          ),
         );
       },
       onSelected: (name) {
