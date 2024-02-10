@@ -26,8 +26,7 @@ class ChatWidgetCard extends ConsumerWidget {
             context,
             MaterialPageRoute(
               builder: (context) => ChatScreen(
-                "${current.isGroupChat ?? false ? current.name : current.lastParticipantName}",
-                current.id ?? "",
+                current,
               ),
             ));
       },
@@ -47,7 +46,8 @@ class ChatWidgetCard extends ConsumerWidget {
               Row(
                 children: [
                   stackedImage(
-                      current.participants?.map((e) => e.avatar?.url).toList()),
+                      current.participants?.map((e) => e.avatar?.url).toList(),
+                      52),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -120,29 +120,6 @@ class ChatWidgetCard extends ConsumerWidget {
             ],
           ),
         ),
-        // child: ListTile(
-        //   // leading: stackedImage(current?.participants
-        //   //     ?.map((e) => e.avatar?.url)
-        //   //     .toList()),
-        //   title: Text(
-        //       "${current.chatTitle}\n#${current.differenceD}"),
-        //   subtitle: Text(current.chatSubtitle),
-        //   trailing: current.hasNewChat
-        //       ? Container(
-        //           padding:
-        //               const EdgeInsets.all(5),
-        //           decoration: const BoxDecoration(
-        //               shape: BoxShape.circle,
-        //               color: Colors.green),
-        //           child: Text(
-        //             "${current.newChatCount}",
-        //             style: const TextStyle(
-        //               color: Colors.white,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ))
-        //       : null,
-        // ),
       ),
     );
   }

@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/core/constants/string_constants.dart';
 
-Widget stackedImage(List<String?>? imageUrlList) {
+Widget stackedImage(List<String?>? imageUrlList, double size) {
   return Container(
-    height: 60,
-    width: 60,
+    height: size + 8,
+    width: size + 8,
     margin: const EdgeInsets.only(right: 10),
     child: Stack(
       children: imageUrlList != null && imageUrlList.isNotEmpty
@@ -26,8 +26,8 @@ Widget stackedImage(List<String?>? imageUrlList) {
                               const CircularProgressIndicator(),
                           imageBuilder: (context, provider) {
                             return Container(
-                              height: 52,
-                              width: 52,
+                              height: size,
+                              width: size,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(image: provider),

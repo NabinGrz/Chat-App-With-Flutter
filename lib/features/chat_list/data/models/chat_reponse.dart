@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_chat_app/features/chat_list/data/models/message_reponse.dart';
 
+import '../../../../core/constants/string_constants.dart';
 import 'chat_list_response.dart';
 
 class Chat {
@@ -41,7 +42,7 @@ class Chat {
       isGroupChat == true && lastMessage != null;
   bool get hasNewChat => newChatCount > 0;
   String get senderMessage => "${senderUsername?.trim()}: $content";
-  String get msgOrNo => content ?? "No message yet";
+  String get msgOrNo => content ?? AppStrings.noMessageYet;
   String get chatSubtitle =>
       isGrpChatAndHasLastMessage ? senderMessage : msgOrNo;
   String? get chatTitle => isGroupChat == true ? name : lastParticipantName;

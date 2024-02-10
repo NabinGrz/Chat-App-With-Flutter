@@ -6,6 +6,7 @@ import 'package:flutter_chat_app/features/chat_list/presentation/providers/chat_
 import 'package:flutter_chat_app/features/chat_list/presentation/widgets/create_chat_dialog.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../core/constants/string_constants.dart';
 import 'widgets/chat_widget.dart';
 
 class ChatListPage extends ConsumerWidget {
@@ -18,6 +19,8 @@ class ChatListPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        // toolbarHeight: 70,
+        titleSpacing: 0,
         elevation: 0,
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(
@@ -69,7 +72,7 @@ class ChatListPage extends ConsumerWidget {
                             (snapshot.data?.isEmpty ?? true))
                         ? Center(
                             child: Text(
-                            "No Chats Available!!",
+                            AppStrings.noChatsAvailable,
                             style: AppTextStyle.light(
                               fontSize: 20,
                               color: Colors.grey,
@@ -130,8 +133,14 @@ class ChatListPage extends ConsumerWidget {
                                     final current = snapshot.data?[index];
                                     return current != null
                                         ? ChatWidgetCard(current: current)
-                                        : const Center(
-                                            child: Text("No messages yet!!"),
+                                        : Center(
+                                            child: Text(
+                                              AppStrings.noMessageYet,
+                                              style: AppTextStyle.light(
+                                                fontSize: 20,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
                                           );
                                   },
                                 ),

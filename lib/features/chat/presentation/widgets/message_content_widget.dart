@@ -7,20 +7,28 @@ class MessageContentCard extends StatelessWidget {
   final int index;
   final List<Message> data;
   final String content;
+  final String senderID;
+  final String myID;
   final bool isMyMessage;
   const MessageContentCard(
       {super.key,
       required this.index,
       required this.data,
       required this.content,
-      required this.isMyMessage});
+      required this.isMyMessage,
+      required this.senderID,
+      required this.myID});
 
   @override
   Widget build(BuildContext context) {
+    String? beforeMe = (index - 1) < 0 ? "*" : data[index - 1].sender?.id;
+    String? afterMe =
+        (index + 1) >= data.length ? "#" : data[index + 1].sender?.id;
+    String me = senderID;
+    bool isLastMessage = afterMe != me;
+    bool isFirstMessage = beforeMe != me && me == afterMe;
     return Container(
-      // color: Colors.amber,
       margin: EdgeInsets.only(
-        // bottom: index == data.length - 1 ? 10 : 0,
         left: isMyMessage ? 60 : 0,
         right: !isMyMessage ? 60 : 0,
       ),
@@ -34,19 +42,39 @@ class MessageContentCard extends StatelessWidget {
               borderRadius: index != data.length - 1
                   ? BorderRadius.circular(30)
                   : const BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ))
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                    ),
+            )
           : BoxDecoration(
               color: const Color(0xffe9e8e8),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: beforeMe != me && afterMe != me
+                  ? BorderRadius.circular(10)
+                  : isLastMessage
+                      ? const BorderRadius.only(
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
+                          bottomRight: Radius.circular(8),
+                          bottomLeft: Radius.circular(20),
+                        )
+                      : isFirstMessage
+                          ? const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(8),
+                              bottomRight: Radius.circular(8),
+                              bottomLeft: Radius.circular(8),
+                            )
+                          : BorderRadius.circular(10),
             ),
-      child: Text(content,
-          style: AppTextStyle.light(
-            color: isMyMessage ? Colors.white : Colors.black,
-            fontSize: 16,
-          )),
+      child: Text(
+        content,
+        // "$content:$isLastMessage:$isFirstMessage: ${data.length >= 2}",
+        style: AppTextStyle.light(
+          color: isMyMessage ? Colors.white : const Color(0xff1f1f1f),
+          fontSize: 16,
+        ),
+      ),
     );
   }
 }

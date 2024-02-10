@@ -20,7 +20,7 @@ class AppRouter {
       case chatList:
         return navigate(settings, const ChatListPage());
       case chatScreen:
-        return navigate(settings, const ChatScreen("", ""));
+        return navigate(settings, const ChatScreen(null));
       default:
         throw Exception(["Route Not Found!!"]);
     }

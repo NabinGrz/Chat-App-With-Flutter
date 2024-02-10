@@ -4,25 +4,32 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_app/core/constants/app_colors.dart';
 import 'package:flutter_chat_app/core/constants/app_text_style.dart';
+import 'package:flutter_chat_app/core/constants/string_constants.dart';
+import 'package:flutter_chat_app/features/chat_list/data/models/chat_reponse.dart';
+import 'package:flutter_chat_app/shared/extensions/date_time_extensions.dart';
+import 'package:flutter_chat_app/shared/extensions/list_extensions.dart';
 import 'package:flutter_chat_app/shared/providers/global_providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
+import '../../chat_list/presentation/widgets/stacked_image.dart';
 import 'providers/private_chat_providers.dart';
 import 'widgets/messages_list_view_widget.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final String username;
-  final String id;
+  final Chat? current;
 
-  const ChatScreen(this.username, this.id, {Key? key}) : super(key: key);
+  const ChatScreen(this.current, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
-  get username => widget.username;
-  get id => widget.id;
+  Chat? get current => widget.current;
+  get username =>
+      "${current?.isGroupChat ?? false ? current?.name : current?.lastParticipantName}";
+  get id => current?.id ?? "";
   Timer? _checkTypingTimer;
   startTimer() {
     _checkTypingTimer = Timer(const Duration(milliseconds: 600), () {
@@ -59,14 +66,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff7f6f8),
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
         centerTitle: false,
+        titleSpacing: 0,
         title: Row(
           children: [
+            stackedImage(
+                current?.participants?.map((e) => e.avatar?.url).toList(), 48),
             Text(
               username,
               style: AppTextStyle.semiBold(
@@ -87,13 +98,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 : Column(
                     children: [
                       !snapshot.hasData && snapshot.data == null
-                          ? const Expanded(
+                          ? Expanded(
                               child: Center(
-                                child: Text("No messages yet!!"),
+                                child: Text(
+                                  AppStrings.noMessageYet,
+                                  style: AppTextStyle.light(
+                                    fontSize: 20,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                             )
                           : MessagesListViewWidget(
-                              data: snapshot.data!, id: id),
+                              data: snapshot.data!.groupBy(
+                                (msg) => msg.createdAt.format('yyyy-MM-dd'),
+                              ),
+                              id: id),
                       Container(
                         // margin: const EdgeInsets.only(
                         //     // bottom: 25,

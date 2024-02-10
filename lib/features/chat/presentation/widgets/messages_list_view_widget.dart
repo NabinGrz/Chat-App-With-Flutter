@@ -1,16 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_app/core/constants/app_text_style.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_content_widget.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/message_image_card.dart';
 import 'package:flutter_chat_app/features/chat/presentation/widgets/typing_indicator.dart';
+import 'package:flutter_chat_app/shared/extensions/date_time_extensions.dart';
+import 'package:flutter_chat_app/shared/extensions/list_extensions.dart';
+import 'package:flutter_chat_app/shared/extensions/string_extensions.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../core/constants/string_constants.dart';
 import '../../../chat_list/data/models/message_reponse.dart';
 import '../providers/private_chat_providers.dart';
+import 'typing_widget.dart';
 
 class MessagesListViewWidget extends ConsumerWidget {
-  final List<Message> data;
+  final Map<String, List<Message>> data;
   final String id;
   const MessagesListViewWidget({
     super.key,
@@ -21,7 +26,6 @@ class MessagesListViewWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ScrollController controller = ScrollController();
-
     return Expanded(
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -29,135 +33,137 @@ class MessagesListViewWidget extends ConsumerWidget {
         reverse: true,
         controller: controller,
         children: [
-          if (ref.read(privateChatProvider.notifier).isTyping) ...{
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.orange,
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: data.first.sender?.avatar?.url == null
-                          ? AppStrings.imagePlaceHolder
-                          : data.first.sender?.avatar?.url ?? "",
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      imageBuilder: (context, provider) {
-                        return Container(
-                          height: 24,
-                          width: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(image: provider),
-                          ),
-                        );
-                      },
-                    )),
-                // const SizedBox(width: 6),
-                const Expanded(
-                  child: TypingIndicator(
-                    circleHeight: 10,
-                    circleWidth: 10,
-                    indicatorHeight: 30,
-                    indicatorWidth: 60,
-                    showIndicator: true,
-                    bubbleColor: Color.fromARGB(255, 174, 177, 178),
-                    flashingCircleBrightColor: Color(0xFF333333),
-                    flashingCircleDarkColor: Color(0xFFaec1dd),
-                  ),
-                ),
-              ],
-            )
-          },
+          // if (ref.read(privateChatProvider.notifier).isTyping) ...{
+          //   TypingWidget(data: data)
+          // },
           const SizedBox(
             height: 10,
           ),
           ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             separatorBuilder: (context, index) {
               return const SizedBox(
                 height: 12,
               );
             },
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
             itemCount: data.length,
             itemBuilder: (context, index) {
-              final message = data[index];
-              bool isMyMessage =
-                  ref.watch(myUserIDProvider) == message.sender?.id;
-              return Align(
-                alignment:
-                    isMyMessage ? Alignment.centerRight : Alignment.centerLeft,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: isMyMessage
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.start,
-                  children: [
-                    if (!isMyMessage) ...{
-                      Container(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.orange,
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: message.sender?.avatar?.url == null
-                              ? AppStrings.imagePlaceHolder
-                              : message.sender?.avatar?.url ?? "",
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          imageBuilder: (context, provider) {
-                            return Container(
-                              height: 24,
-                              width: 24,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(image: provider),
-                              ),
-                            );
-                          },
-                        ),
+              final group = data.keys.elementAt(index);
+              final list = data[group];
+              return Column(
+                children: [
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: Text(
+                      group.toDate.format("MMMM dd, yyyy"),
+                      style: AppTextStyle.light(
+                        color: Colors.grey,
                       ),
-                      const SizedBox(
-                        width: 6,
-                      )
-                    },
-                    Flexible(
-                      flex: 1,
-                      child: ((message.attachments != null &&
-                                  message.attachments!.isNotEmpty) &&
-                              (message.content != null &&
-                                  message.content != ""))
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                MessageImageCard(
-                                  imageUrl: "${message.attachments?.first.url}",
-                                  isMyMessage: isMyMessage,
-                                ),
-                                MessageContentCard(
-                                    index: index,
-                                    data: data,
-                                    content: "${message.content}",
-                                    isMyMessage: isMyMessage),
-                              ],
-                            )
-                          : message.attachments != null &&
-                                  message.attachments!.isNotEmpty
-                              ? MessageImageCard(
-                                  isMyMessage: isMyMessage,
-                                  imageUrl: "${message.attachments?.first.url}")
-                              : MessageContentCard(
-                                  index: index,
-                                  data: data,
-                                  content: "${message.content}",
-                                  isMyMessage: isMyMessage),
                     ),
-                  ],
-                ),
+                  )),
+                  ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        height: 8,
+                      );
+                    },
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: list != null ? list.length : 0,
+                    itemBuilder: (context, index) {
+                      final message = list![index];
+                      bool isMyMessage =
+                          ref.watch(myUserIDProvider) == message.sender?.id;
+                      return Column(
+                        crossAxisAlignment: !isMyMessage
+                            ? CrossAxisAlignment.start
+                            : CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: isMyMessage
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              if (!isMyMessage) ...{
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.orange,
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl:
+                                        message.sender?.avatar?.url == null
+                                            ? AppStrings.imagePlaceHolder
+                                            : message.sender?.avatar?.url ?? "",
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    imageBuilder: (context, provider) {
+                                      return Container(
+                                        height: 24,
+                                        width: 24,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image:
+                                              DecorationImage(image: provider),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                )
+                              },
+                              Flexible(
+                                flex: 1,
+                                child: ((message.attachments != null &&
+                                            message.attachments!.isNotEmpty) &&
+                                        (message.content != null &&
+                                            message.content != ""))
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          MessageImageCard(
+                                            imageUrl:
+                                                "${message.attachments?.first.url}",
+                                            isMyMessage: isMyMessage,
+                                          ),
+                                          MessageContentCard(
+                                              myID: ref.watch(myUserIDProvider),
+                                              senderID:
+                                                  message.sender?.id ?? "",
+                                              index: index,
+                                              data: list,
+                                              content: "${message.content}",
+                                              isMyMessage: isMyMessage),
+                                        ],
+                                      )
+                                    : message.attachments != null &&
+                                            message.attachments!.isNotEmpty
+                                        ? MessageImageCard(
+                                            isMyMessage: isMyMessage,
+                                            imageUrl:
+                                                "${message.attachments?.first.url}")
+                                        : MessageContentCard(
+                                            myID: ref.watch(myUserIDProvider),
+                                            senderID: message.sender?.id ?? "",
+                                            index: index,
+                                            data: list,
+                                            content: "${message.content}",
+                                            isMyMessage: isMyMessage),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               );
             },
           ),
